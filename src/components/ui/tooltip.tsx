@@ -4,8 +4,8 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
 import { cn } from "@/lib/utils"
 
-// Wrap the provider in a React component so hooks work correctly
-const TooltipProvider: React.FC<React.PropsWithChildren> = ({
+// Properly type the provider so we allow all props, including delayDuration
+const TooltipProvider: React.FC<React.ComponentProps<typeof TooltipPrimitive.Provider>> = ({
   children,
   ...props
 }) => (
