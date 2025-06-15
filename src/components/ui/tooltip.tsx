@@ -1,9 +1,16 @@
+
 import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
 import { cn } from "@/lib/utils"
 
-const TooltipProvider = TooltipPrimitive.Provider
+// Wrap the provider in a React component so hooks work correctly
+const TooltipProvider: React.FC<React.PropsWithChildren> = ({
+  children,
+  ...props
+}) => (
+  <TooltipPrimitive.Provider {...props}>{children}</TooltipPrimitive.Provider>
+);
 
 const Tooltip = TooltipPrimitive.Root
 
