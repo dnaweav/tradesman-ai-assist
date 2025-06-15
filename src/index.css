@@ -101,3 +101,51 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Pulse glow for floating mic */
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 0 0 #ffc00045; }
+  50% { box-shadow: 0 0 0 16px #ffc00018; }
+  100% { box-shadow: 0 0 0 0 #ffc00045; }
+}
+.animate-pulse-glow { animation: pulse-glow 1.9s cubic-bezier(0.4,0,0.6,1) infinite; }
+
+/* Ripple animation on mic tap */
+@keyframes ripple {
+  from { opacity: 0.4; transform: scale(1); }
+  to { opacity: 0; transform: scale(2.7); }
+}
+.animate-ripple { animation: ripple 0.4s linear; }
+
+/* Mic button micro-interactions */
+@keyframes mic-pulse {
+  0%,100% { transform: scale(1); opacity: 0.8; }
+  65% { transform: scale(1.09); opacity: 1; }
+}
+.animate-mic-pulse { animation: mic-pulse 1.6s var(--tw-ease-in-out) infinite; }
+
+@keyframes mic-bounce {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-8%); }
+  60% { transform: translateY(2%); }
+  85% { transform: translateY(-3%); }
+}
+.animate-mic-bounce { animation: mic-bounce .5s; }
+
+/* Glass shine card animation */
+@keyframes card-shine {
+  from   { transform: translateX(-80%); opacity: 0.25; }
+  30%    { opacity: 0.45; }
+  75%    { opacity: 0.35; }
+  100%  { transform: translateX(120%); opacity: 0; }
+}
+.animate-card-shine {
+  animation: card-shine 2.2s cubic-bezier(0.65,0.05,0.36,1) infinite;
+}
+
+/* Fade-in, slide-up for content load */
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(20px);}
+  100% { opacity: 1; transform: translateY(0);}
+}
+.animate-fade-in { animation: fade-in 0.60s cubic-bezier(.4,0,.6,1) both; }

@@ -14,6 +14,45 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { WelcomeTour } from "@/components/WelcomeTour";
 import { supabase } from "@/integrations/supabase/client";
 
+// VoiceInputCard component: modern voice input UI
+function VoiceInputCard({ onMic }: { onMic: () => void }) {
+  const [isHover, setIsHover] = React.useState(false);
+
+  return (
+    <div className="relative bg-white/70 border border-[#eaeaea] rounded-2xl shadow-lg px-4 py-8 my-4 flex flex-col items-center justify-center text-center animate-fade-in backdrop-blur-xl max-w-xl mx-auto">
+      <button
+        aria-label="Tap to speak"
+        className="outline-none border-none bg-transparent flex flex-col items-center justify-center"
+        onClick={onMic}
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        style={{ WebkitTapHighlightColor: "transparent" }}
+      >
+        <span className="relative w-16 h-16 mb-2 flex items-center justify-center">
+          {/* Pulsing or bouncing mic */}
+          <span className={`absolute inset-0 rounded-full bg-[#ffc000]/60 animate-mic-pulse scale-110`} />
+          <span className={isHover ? "animate-mic-bounce" : ""}>
+            <svg width={44} height={44} viewBox="0 0 48 48" fill="none">
+              <circle cx={24} cy={24} r={20} fill="#ffc000" opacity="0.12" />
+              <path d="M24 30c3 0 5-2 5-5V16c0-3-2-5-5-5s-5 2-5 5v9c0 3 2 5 5 5Z" stroke="#ffc000" strokeWidth="2.5" />
+              <path d="M17 22v3a7 7 0 0 0 14 0v-3" stroke="#3b9fe6" strokeWidth="2" />
+              <rect x={22} y={34} width={4} height={7} rx={2} fill="#3b9fe6" />
+            </svg>
+          </span>
+        </span>
+        <div className="text-lg font-semibold text-[#333333]">Tap to speak &mdash; we'll handle the admin</div>
+        <button
+          className="mt-3 text-sm text-[#3b9fe6] px-3 py-1 rounded transition hover:bg-[#3b9fe6]/10 font-medium"
+          type="button"
+          tabIndex={-1}
+        >
+          Or type it instead
+        </button>
+      </button>
+    </div>
+  );
+}
+
 export default function Index() {
   const [activeTab, setActiveTab] = React.useState("home");
   const [voiceSheetOpen, setVoiceSheetOpen] = React.useState(false);
@@ -73,29 +112,38 @@ export default function Index() {
 
   // Authenticated
   return (
-    <div className="min-h-screen bg-[#eaeaea] text-[#333333] flex flex-col relative">
-      <main className="flex-1 w-full max-w-md mx-auto flex flex-col relative pb-24 sm:max-w-full sm:pb-0 sm:px-10">
+    <div className="min-h-screen bg-[#eaeaea] dark:bg-[#20232a] text-[#333333] flex flex-col relative">
+      <main className="flex-1 w-full max-w-md mx-auto flex flex-col relative pb-36 sm:max-w-full sm:pb-0 sm:px-3">
         <TopNav />
-        <div className="flex-1 mt-1">
-          {
-            {
-              home: (
-                <div className="space-y-6 pt-4">
-                  <QuickActions onMic={() => setVoiceSheetOpen(true)} />
-                </div>
-              ),
-              chats: <ChatsList />,
-              clients: <ClientsList />,
-              docs: <DocsList />,
-              profile: <ProfileDemo />,
-              support: <SupportDemo />,
-            }[activeTab]
-          }
+        <div className="flex-1 pt-1 px-1 pb-2 animate-fade-in">
+          {(() => {
+            switch (activeTab) {
+              case "home":
+                return (
+                  <div className="space-y-8 pt-3">
+                    <QuickActions onMic={() => setVoiceSheetOpen(true)} />
+                    <VoiceInputCard onMic={() => setVoiceSheetOpen(true)} />
+                  </div>
+                );
+              case "chats":
+                return <ChatsList />;
+              case "clients":
+                return <ClientsList />;
+              case "docs":
+                return <DocsList />;
+              case "profile":
+                return <ProfileDemo />;
+              case "support":
+                return <SupportDemo />;
+              default:
+                return null;
+            }
+          })()}
         </div>
-        {/* Floating voice input button for all tabs */}
+        {/* Floating mic button */}
         <VoiceInputButton onClick={() => setVoiceSheetOpen(true)} />
+        {/* Voice input modal */}
         <Sheet open={voiceSheetOpen} onOpenChange={setVoiceSheetOpen}>
-          {/* Demo voice input modal */}
           <div className="p-6 text-center" style={{ minWidth: 320 }}>
             <div className="text-xl font-semibold mb-2">Speak your note</div>
             <div className="text-[#3b9fe6] font-bold mb-6 text-4xl">
