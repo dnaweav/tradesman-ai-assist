@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import TheTradesmenLogo from "/TheTradesmen_Logo_Blue_1.png";
+// Update logo import to use the uploaded asset
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -65,7 +65,7 @@ export function AuthScreen() {
       <div className="absolute inset-0 bg-white/60 backdrop-blur-sm" aria-hidden="true"></div>
       <div className="relative w-full max-w-sm mx-auto flex flex-col items-center z-10 px-4 py-8 rounded-xl shadow-lg bg-white/80">
         <img
-          src={TheTradesmenLogo}
+          src="/lovable-uploads/e9f7f372-2dd2-45bb-aefd-a4504a9f0249.png"
           alt="The Tradesmen AI Logo"
           className="mb-6 w-20 h-20 object-contain drop-shadow"
           draggable={false}
@@ -143,4 +143,3 @@ export function AuthScreen() {
     </div>
   );
 }
-
