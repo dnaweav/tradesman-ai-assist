@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import { Home, MessageSquare, Users, File, User, Support } from "lucide-react";
+import { Home, MessageSquare, Users, File, User, LifeBuoy } from "lucide-react";
 
 type Props = {
   activeTab: string;
@@ -13,7 +13,7 @@ const tabs = [
   { key: "clients", label: "Clients", icon: Users },
   { key: "docs", label: "Docs", icon: File },
   { key: "profile", label: "Profile", icon: User },
-  { key: "support", label: "Support", icon: Support },
+  { key: "support", label: "Support", icon: LifeBuoy }, // Replaced Support with LifeBuoy
 ];
 
 export function AppBottomTabs({ activeTab, onTabChange }: Props) {

@@ -1,12 +1,12 @@
 
 import * as React from "react";
-import { Support } from "lucide-react";
+import { LifeBuoy } from "lucide-react"; // Replaced Support with LifeBuoy
 
 export function SupportDemo() {
   return (
     <section>
       <div className="font-bold text-lg text-[#333] mb-3 flex items-center gap-2">
-        <Support className="text-[#3b9fe6]" /> Support
+        <LifeBuoy className="text-[#3b9fe6]" /> Support
       </div>
       <div className="bg-white rounded-xl p-6 shadow border border-[#eaeaea]">
         <div className="font-semibold mb-2">Need help?</div>
