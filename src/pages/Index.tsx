@@ -1,28 +1,48 @@
 
 import * as React from "react";
-import { TopNav } from "@/components/TopNav";
-import { AppBottomTabs } from "@/components/AppBottomTabs";
-import { HeroSection } from "@/components/HeroSection";
+import { InputBar } from "@/components/InputBar";
+import { PromptPills } from "@/components/PromptPills";
 
 export default function Index() {
-  // Active tab always home here for simplicity
-  const [activeTab, setActiveTab] = React.useState("home");
+  const [input, setInput] = React.useState("");
+  const [micActive, setMicActive] = React.useState(false);
+
+  // Mock mic interaction feedback: scale/glow on tap
+  function handleMic() {
+    setMicActive(true);
+    setTimeout(() => setMicActive(false), 480);
+    // TODO: trigger voice modal/assistant logic here
+  }
+
+  // Optional: handle prompt tap to fill input
+  function handlePrompt(p: string) {
+    setInput(p);
+  }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#3b9fe6] relative overflow-x-hidden">
-      <TopNav />
-      {/* Optional background illustration for subtle depth */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-32 -top-24 w-96 h-96 rounded-full bg-white/10 blur-3xl"
-        style={{ zIndex: 1 }}
-      ></div>
-      {/* Hero section (centered) */}
-      <main className="flex-1 flex flex-col justify-center items-center px-4 relative z-10">
-        <HeroSection />
-      </main>
-      {/* Bottom Navigation */}
-      <AppBottomTabs activeTab={activeTab} onTabChange={setActiveTab} />
+    <div className="min-h-screen flex flex-col justify-center items-center bg-[#3b9fe6] relative overflow-x-clip py-8 px-4">
+      {/* Centered Heading */}
+      <h1 className="text-2xl md:text-3xl font-semibold text-white text-center mb-6 animate-fade-in">
+        What can I help with?
+      </h1>
+
+      {/* Input Bar */}
+      <div className="w-full flex flex-col items-center">
+        <InputBar
+          value={input}
+          onChange={setInput}
+          onMic={handleMic}
+          micActive={micActive}
+        />
+      </div>
+
+      {/* Prompt Pills */}
+      <div className="w-full flex flex-col items-center">
+        <PromptPills onPrompt={handlePrompt} />
+      </div>
+
+      {/* Spacing */}
+      <div className="pb-12" />
     </div>
   );
 }
