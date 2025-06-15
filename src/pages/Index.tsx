@@ -65,10 +65,7 @@ export default function Index() {
   if (!authChecked) return <LoadingScreen />;
   if (!session) {
     return (
-      <AuthScreen
-        onLoginStart={() => setLoading(true)}
-        onLoginSuccess={() => setLoading(false)}
-      />
+      <AuthScreen />
     );
   }
   if (forceLoading) return <LoadingScreen />;
