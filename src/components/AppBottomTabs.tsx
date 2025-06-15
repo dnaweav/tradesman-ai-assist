@@ -10,14 +10,14 @@ const tabs = [
   { key: "promo", label: "Promo", icon: Megaphone },
 ];
 
-// Floating mic button, positioned between Clients and Promo
 function FloatingMicButton({ onClick }: { onClick?: () => void }) {
+  // Placed between Clients and Promo tab
   return (
     <button
       className={cn(
-        "absolute -top-6 left-1/2 -translate-x-[65%] z-20", // Shift left to sit between 3rd and 4th tab, 65% is visually balanced
+        "absolute -top-6 left-1/2 -translate-x-[65%] z-20",
         "bg-[#ffc000] hover:bg-yellow-400 text-white rounded-full shadow-xl flex items-center justify-center",
-        "h-14 w-14 md:h-16 md:w-16 active:scale-95 transition-all ease-in-out border-4 border-white"
+        "h-14 w-14 md:h-16 md:w-16 active:scale-95 transition-all border-4 border-white"
       )}
       style={{
         boxShadow:
@@ -28,7 +28,7 @@ function FloatingMicButton({ onClick }: { onClick?: () => void }) {
       tabIndex={0}
       type="button"
     >
-      <Mic size={28} className="text-white" />
+      <Mic className="w-7 h-7 text-white" />
     </button>
   );
 }
@@ -46,67 +46,57 @@ export function AppBottomTabs({
     <nav
       className={cn(
         "fixed bottom-6 left-1/2 -translate-x-1/2 z-[51]",
-        "w-[90%] max-w-md px-0"
+        "bg-white/10 backdrop-blur-md border border-white/20 shadow-xl rounded-full",
+        "px-4 py-3 max-w-md w-[90%] transition-all ease-in-out"
       )}
       aria-label="Main navigation"
     >
-      <div className="relative flex items-center justify-center">
-        {/* Floating Mic FAB (between Clients and Promo) */}
+      {/* Floating Mic Button: positioned above the center gap */}
+      <div className="relative w-full h-0 flex items-center justify-center">
         <FloatingMicButton onClick={onMicClick} />
       </div>
       <ul
         className={cn(
-          "flex items-center justify-around w-full",
-          "bg-white/10 backdrop-blur-md border border-white/20 shadow-xl rounded-full",
-          "px-6 py-3 mt-2 transition-all ease-in-out gap-0"
+          "flex justify-around items-center w-full gap-0 mt-0"
         )}
       >
-        {tabs.map((tab, idx) => {
+        {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
           return (
-            <li
-              key={tab.key}
-              className={cn(
-                "flex-1 flex items-center justify-center min-w-[60px]"
-              )}
-            >
+            <li key={tab.key} className="flex-1 min-w-0 flex">
               <button
                 type="button"
                 className={cn(
-                  "flex flex-col items-center justify-center gap-1 rounded-full px-2 py-1",
-                  "transition-all duration-150 ease-in-out select-none",
-                  "text-xs font-medium",
+                  "w-full flex flex-col items-center justify-center gap-1 flex-1 min-w-0",
+                  "rounded-full select-none group",
+                  "transition-all duration-150 ease-in-out",
+                  "text-xs font-medium py-1 px-2",
                   isActive
-                    ? "font-semibold text-white"
+                    ? "text-white font-semibold"
                     : "text-white/80",
-                  "active:scale-95 hover:opacity-100 focus-visible:ring-0",
-                  !isActive && "opacity-80"
+                  "active:scale-95 hover:opacity-100 focus-visible:outline-none"
                 )}
                 onClick={() => onTabChange(tab.key)}
                 aria-current={isActive}
                 tabIndex={0}
                 style={{
-                  minWidth: 58,
-                  // Slight scale for active, subtle underline
                   transform: isActive ? "scale(1.06)" : undefined,
+                  minWidth: 0,
                 }}
               >
                 <tab.icon
-                  size={24}
                   className={cn(
-                    "mb-0.5 transition-opacity duration-100",
-                    isActive
-                      ? "text-white opacity-100"
-                      : "text-white/80 opacity-60"
+                    "w-5 h-5 transition-opacity duration-100",
+                    isActive ? "opacity-100" : "opacity-60"
                   )}
                   strokeWidth={2.15}
                 />
                 <span
                   className={cn(
-                    "transition font-medium text-xs",
+                    "transition text-xs",
                     isActive
-                      ? "font-semibold text-white"
-                      : "text-white/80"
+                      ? "text-white font-semibold"
+                      : "text-white/80 font-medium"
                   )}
                   style={
                     isActive
@@ -128,3 +118,4 @@ export function AppBottomTabs({
     </nav>
   );
 }
+
