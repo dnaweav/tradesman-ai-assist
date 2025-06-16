@@ -10,9 +10,10 @@ import {
   Moon,
   X
 } from "lucide-react";
-import { SheetContent } from "@/components/ui/sheet";
+import { SheetContent, SheetClose, SheetHeader } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 export function HamburgerMenu({ onClose }: { onClose: () => void }) {
   const [darkMode, setDarkMode] = React.useState(() =>
@@ -49,18 +50,17 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
       className="w-80 bg-white/90 backdrop-blur-md border-l border-white/20 shadow-lg z-50 dark:bg-[#20232a]/90"
     >
       <div className="flex flex-col h-full">
-        {/* Close Button */}
-        <button
-          className="absolute top-3 right-5 rounded-full p-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-all duration-150 ease-in-out"
-          aria-label="Close menu"
-          onClick={onClose}
-          type="button"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* Header with Close Button */}
+        <SheetHeader className="flex justify-end pr-4 pt-4">
+          <SheetClose asChild>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <X className="w-5 h-5" />
+            </Button>
+          </SheetClose>
+        </SheetHeader>
         
         {/* Menu Content */}
-        <div className="flex-1 flex flex-col pt-14 pb-6 px-4 space-y-6">
+        <div className="flex-1 flex flex-col pt-6 pb-6 px-4 space-y-6">
           {/* Account Section */}
           <div>
             <h2 className="text-sm text-muted-foreground uppercase mb-3 font-semibold tracking-wide">Account</h2>
