@@ -1,19 +1,15 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, Upload, Calendar, Globe } from "lucide-react";
+import { Upload, Calendar, Globe } from "lucide-react";
 
 export function InputBar({
   value,
   onChange,
-  onMic,
-  micActive,
   ...props
 }: {
   value: string;
   onChange: (v: string) => void;
-  onMic?: () => void;
-  micActive?: boolean;
 }) {
   return (
     <div
@@ -39,17 +35,6 @@ export function InputBar({
         onChange={e => onChange(e.target.value)}
         {...props}
       />
-      <Button
-        type="button"
-        size="icon"
-        variant="secondary"
-        aria-label="Start voice input"
-        onClick={onMic}
-        className={`ml-2 rounded-full bg-[#ffc000] hover:bg-[#ffd850] text-[#20232a] shadow-lg focus-visible:ring-2 focus-visible:ring-yellow-300 transition-all ${micActive ? "scale-110 animate-pulse-glow" : "active:scale-95"}`}
-        tabIndex={0}
-      >
-        <Mic size={22} strokeWidth={2} />
-      </Button>
     </div>
   );
 }
