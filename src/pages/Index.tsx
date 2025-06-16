@@ -1,6 +1,5 @@
 
 import * as React from "react";
-import { InputBar } from "@/components/InputBar";
 import { PromptPills } from "@/components/PromptPills";
 import { AppBottomTabs } from "@/components/AppBottomTabs";
 import { Sheet } from "@/components/ui/sheet";
@@ -33,7 +32,7 @@ export default function Index() {
         <button
           aria-label="Open menu"
           onClick={() => setMenuOpen(true)}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 active:scale-95 transition focus-visible:outline-none"
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 active:scale-95 transition-all duration-150 ease-in-out focus-visible:outline-none"
           type="button"
         >
           <Menu className="w-6 h-6 text-white" />
@@ -58,7 +57,7 @@ export default function Index() {
         
         <div className="relative max-w-xl w-full mb-4">
           <input
-            className="w-full px-6 py-3 rounded-full bg-white/10 backdrop-blur-md text-white placeholder-white/50 text-base border border-white/15 focus:outline-none focus:ring-2 focus:ring-white/30"
+            className="w-full px-6 py-3 rounded-full bg-white/10 backdrop-blur text-white placeholder-white/50 text-base border border-white/15 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
             placeholder="Describe the job, follow-up or task…"
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -70,7 +69,7 @@ export default function Index() {
 
       {/* Floating Mic Button */}
       <button
-        className="absolute bottom-[96px] left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-40 hover:scale-105 transition-all active:scale-95"
+        className="fixed bottom-[72px] left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-40 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95"
         style={{
           boxShadow: "0 8px 32px #ffc00040"
         }}

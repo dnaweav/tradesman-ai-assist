@@ -2,7 +2,7 @@
 import * as React from "react";
 import {
   User,
-  File,
+  FileText,
   Settings,
   BookOpen,
   LifeBuoy,
@@ -11,6 +11,8 @@ import {
   ArrowRight
 } from "lucide-react";
 import { SheetContent } from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 
 export function HamburgerMenu({ onClose }: { onClose: () => void }) {
   const [darkMode, setDarkMode] = React.useState(() =>
@@ -24,12 +26,15 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
     window.localStorage.setItem("tmode", darkMode ? "dark" : "light");
   }, [darkMode]);
 
-  const items = [
+  const accountItems = [
     { icon: <User />, label: "Profile" },
-    { icon: <File />, label: "Docs" },
+    { icon: <FileText />, label: "Docs" },
+  ];
+
+  const supportItems = [
+    { icon: <LifeBuoy />, label: "Support" },
     { icon: <Settings />, label: "Settings" },
     { icon: <BookOpen />, label: "Learn" },
-    { icon: <LifeBuoy />, label: "Support" },
   ];
 
   return (
@@ -37,7 +42,7 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
       <div className="flex flex-col h-full">
         {/* Close Button */}
         <button
-          className="absolute top-3 right-5 rounded-full p-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
+          className="absolute top-3 right-5 rounded-full p-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-all duration-150 ease-in-out"
           aria-label="Close menu"
           onClick={onClose}
           type="button"
@@ -45,32 +50,58 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
           <ArrowRight className="w-5 h-5" />
         </button>
         
-        {/* Menu items */}
-        <div className="flex-1 flex flex-col gap-1 pt-14 pb-6">
-          {items.map(({ icon, label }) => (
-            <button
-              key={label}
-              className="flex items-center gap-4 text-lg font-medium py-4 px-6 transition rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#222e] text-[#333] dark:text-white/90"
-              type="button"
-            >
-              {React.cloneElement(icon, { className: "w-6 h-6" })} {label}
-            </button>
-          ))}
-        </div>
-        
-        {/* Dark/Light Mode Toggle */}
-        <div className="border-t border-gray-200 dark:border-[#333] py-4 px-6 flex items-center justify-between">
-          <span className="flex items-center gap-2 text-base font-medium">
-            {darkMode ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-            {darkMode ? "Dark" : "Light"} mode
-          </span>
-          <button
-            className="ml-2 py-1 px-3 rounded-full bg-[#ececec] dark:bg-[#232a38] text-sm font-semibold transition"
-            type="button"
-            onClick={() => setDarkMode((d) => !d)}
-          >
-            {darkMode ? "Light" : "Dark"}
-          </button>
+        {/* Menu Content */}
+        <div className="flex-1 flex flex-col pt-14 pb-6 px-4 space-y-6">
+          {/* Account Section */}
+          <div>
+            <h2 className="text-sm text-muted-foreground uppercase mb-3 font-semibold tracking-wide">Account</h2>
+            <div className="space-y-1">
+              {accountItems.map(({ icon, label }) => (
+                <button
+                  key={label}
+                  className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90"
+                  type="button"
+                >
+                  {React.cloneElement(icon, { className: "w-6 h-6" })} 
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Support Section */}
+          <div>
+            <h2 className="text-sm text-muted-foreground uppercase mb-3 font-semibold tracking-wide">Support</h2>
+            <div className="space-y-1">
+              {supportItems.map(({ icon, label }) => (
+                <button
+                  key={label}
+                  className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90"
+                  type="button"
+                >
+                  {React.cloneElement(icon, { className: "w-6 h-6" })} 
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <Separator className="my-4" />
+          
+          {/* Dark/Light Mode Toggle */}
+          <div className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-3">
+              {darkMode ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              <span className="text-base font-medium">
+                {darkMode ? "Dark" : "Light"} mode
+              </span>
+            </div>
+            <Switch
+              checked={darkMode}
+              onCheckedChange={setDarkMode}
+              className="ml-2"
+            />
+          </div>
         </div>
       </div>
     </SheetContent>
