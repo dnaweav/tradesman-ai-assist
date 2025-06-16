@@ -26,7 +26,7 @@ export default function Index() {
   }
 
   return (
-    <div className="min-h-screen bg-[#3b9fe6] flex flex-col relative overflow-x-clip">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col relative overflow-x-clip">
       {/* Fixed Header */}
       <header className="fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
         <button
@@ -51,6 +51,13 @@ export default function Index() {
 
       {/* Main Content - Centered prompt area */}
       <div className="flex flex-col items-center justify-center flex-grow pt-[64px] pb-[160px] px-4">
+        {/* Brand Logo */}
+        <img
+          src="/TheTradesmen_Logo_Square_White_1.png"
+          alt="theTradesmen.ai logo"
+          className="w-16 h-16 mx-auto mb-4"
+        />
+        
         <h1 className="text-2xl md:text-3xl font-semibold text-white text-center mb-6 animate-fade-in">
           What can I help with?
         </h1>
@@ -69,7 +76,7 @@ export default function Index() {
 
       {/* Floating Mic Button */}
       <button
-        className="fixed bottom-[72px] left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-40 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95"
+        className="fixed bottom-[66px] left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-40 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95"
         style={{
           boxShadow: "0 8px 32px #ffc00040"
         }}

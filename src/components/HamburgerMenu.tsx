@@ -26,6 +26,12 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
     window.localStorage.setItem("tmode", darkMode ? "dark" : "light");
   }, [darkMode]);
 
+  const handleLogout = async () => {
+    // TODO: Implement supabase.auth.signOut() and redirect to login
+    console.log("Logout functionality to be implemented");
+    onClose();
+  };
+
   const accountItems = [
     { icon: <User />, label: "Profile" },
     { icon: <FileText />, label: "Docs" },
@@ -38,7 +44,10 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
   ];
 
   return (
-    <SheetContent className="w-80 bg-white dark:bg-[#20232a] backdrop-blur-md border-l border-white/20 z-50">
+    <SheetContent 
+      side="right" 
+      className="w-80 bg-white/90 backdrop-blur-md border-l border-white/20 shadow-lg z-50 dark:bg-[#20232a]/90"
+    >
       <div className="flex flex-col h-full">
         {/* Close Button */}
         <button
@@ -101,6 +110,16 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
               onCheckedChange={setDarkMode}
               className="ml-2"
             />
+          </div>
+
+          {/* Logout Section */}
+          <div className="mt-6 border-t border-border pt-4">
+            <button 
+              onClick={handleLogout} 
+              className="text-sm text-muted-foreground hover:text-foreground transition-all duration-150 ease-in-out"
+            >
+              Log out
+            </button>
           </div>
         </div>
       </div>
