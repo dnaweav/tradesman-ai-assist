@@ -8,7 +8,7 @@ import {
   LifeBuoy,
   Sun,
   Moon,
-  ArrowRight
+  X
 } from "lucide-react";
 import { SheetContent } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
@@ -56,7 +56,7 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
           onClick={onClose}
           type="button"
         >
-          <ArrowRight className="w-5 h-5" />
+          <X className="w-5 h-5" />
         </button>
         
         {/* Menu Content */}

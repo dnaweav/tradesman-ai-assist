@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { PromptPills } from "@/components/PromptPills";
 import { AppBottomTabs } from "@/components/AppBottomTabs";
@@ -21,10 +22,13 @@ export default function Index() {
   return <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col relative overflow-x-clip">
       {/* Fixed Header */}
       <header className="fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
+        {/* Avatar on Left */}
+        <img src={AVATAR_SRC} className="w-10 h-10 rounded-full object-cover border-2 border-white/30 shadow" alt="User avatar" />
+        
+        {/* Hamburger Menu on Right */}
         <button aria-label="Open menu" onClick={() => setMenuOpen(true)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 active:scale-95 transition-all duration-150 ease-in-out focus-visible:outline-none" type="button">
           <Menu className="w-6 h-6 text-white" />
         </button>
-        <img src={AVATAR_SRC} className="w-10 h-10 rounded-full object-cover border-2 border-white/30 shadow" alt="User avatar" />
       </header>
 
       {/* Hamburger Menu Sheet */}
