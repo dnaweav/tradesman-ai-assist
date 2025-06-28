@@ -2,6 +2,7 @@
 import React, { useRef } from 'react';
 import { Camera, Edit, Trash2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useToast } from '@/hooks/use-toast';
 
 interface LogoUploadSectionProps {
@@ -70,12 +71,14 @@ export function LogoUploadSection({ logoUrl, isAdmin, onLogoUpload, onLogoUpdate
         
         {logoUrl ? (
           // Display uploaded logo with action buttons
-          <div className="relative mx-auto w-32 h-32 rounded-2xl overflow-hidden">
-            <img
-              src={logoUrl}
-              alt="Business Logo"
-              className="w-full h-full object-cover"
-            />
+          <div className="relative mx-auto w-32 rounded-2xl overflow-hidden bg-gray-50">
+            <AspectRatio ratio={1} className="bg-gray-50">
+              <img
+                src={logoUrl}
+                alt="Business Logo"
+                className="w-full h-full object-contain p-2"
+              />
+            </AspectRatio>
             {isAdmin && (
               <div className="absolute top-2 right-2 flex gap-2">
                 <button
