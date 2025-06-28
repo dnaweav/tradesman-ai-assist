@@ -63,7 +63,7 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
   };
 
   const accountItems = [
-    { icon: <User />, label: "Profile" },
+    { icon: <User />, label: "Business Profile" },
     { icon: <FileText />, label: "Docs" },
   ];
 
