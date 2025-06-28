@@ -150,7 +150,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
       )}
 
       {/* Input Container */}
-      <div className="relative flex items-end gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-white/20 dark:border-gray-700/20 px-4 py-2 transition-all duration-200">
+      <div className="relative flex items-end gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/20 px-4 py-2 transition-all duration-200">
         {/* Attachment Button */}
         <Button
           type="button"
