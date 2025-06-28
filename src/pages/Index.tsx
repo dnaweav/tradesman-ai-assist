@@ -14,6 +14,7 @@ export default function Index() {
   const [micActive, setMicActive] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState("home");
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [footerHeight, setFooterHeight] = React.useState(200); // Initial estimated height
 
   function handleMic() {
     setMicActive(true);
@@ -32,7 +33,7 @@ export default function Index() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col relative overflow-x-clip">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col overflow-hidden">
       {/* Fixed Header */}
       <header className="fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
         {/* Avatar on Left */}
@@ -58,8 +59,11 @@ export default function Index() {
         <HamburgerMenu onClose={() => setMenuOpen(false)} />
       </Sheet>
 
-      {/* Main Content - Centered prompt area */}
-      <div className="flex flex-col items-center justify-center flex-grow pt-[64px] pb-[200px] px-4">
+      {/* Main Content - Flexible area that compresses upward */}
+      <div 
+        className="flex flex-col items-center justify-center flex-grow pt-[64px] px-4 transition-all duration-200 ease-in-out"
+        style={{ paddingBottom: footerHeight }}
+      >
         {/* Brand Logo */}
         <img 
           alt="theTradesmen.ai logo" 
@@ -74,30 +78,32 @@ export default function Index() {
         <PromptPills onPrompt={handlePrompt} />
       </div>
 
-      {/* Input Bar - Fixed at bottom */}
-      <div className="fixed bottom-[120px] left-0 right-0 z-30">
+      {/* Footer Container - Sticky positioning with all footer elements */}
+      <div className="sticky bottom-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-md">
+        {/* Mic Button - Positioned within footer container */}
+        <button 
+          className="absolute left-1/2 bottom-[calc(100%-24px)] transform -translate-x-1/2 w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-60 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
+          style={{
+            boxShadow: "0 8px 32px #ffc00040"
+          }} 
+          aria-label="Voice input" 
+          onClick={handleMic} 
+          type="button"
+        >
+          <Mic className="w-6 h-6 text-black" strokeWidth={2} />
+        </button>
+
+        {/* Input Bar */}
         <InputBar 
           value={input} 
           onChange={setInput}
           onSend={handleSend}
+          onHeightChange={setFooterHeight}
         />
+
+        {/* Bottom Navigation */}
+        <AppBottomTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
-
-      {/* Floating Mic Button */}
-      <button 
-        className="fixed bottom-[66px] left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-40 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
-        style={{
-          boxShadow: "0 8px 32px #ffc00040"
-        }} 
-        aria-label="Voice input" 
-        onClick={handleMic} 
-        type="button"
-      >
-        <Mic className="w-6 h-6 text-black" strokeWidth={2} />
-      </button>
-
-      {/* Bottom Navigation */}
-      <AppBottomTabs activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }

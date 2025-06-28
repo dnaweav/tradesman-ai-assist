@@ -16,40 +16,41 @@ interface InputBarProps {
   value: string;
   onChange: (value: string) => void;
   onSend?: (message: string, files: File[]) => void;
+  onHeightChange?: (height: number) => void;
   placeholder?: string;
 }
 
-export function InputBar({ value, onChange, onSend, placeholder = "Describe the job, follow-up or task…" }: InputBarProps) {
+export function InputBar({ value, onChange, onSend, onHeightChange, placeholder = "Describe the job, follow-up or task…" }: InputBarProps) {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const cameraInputRef = React.useRef<HTMLInputElement>(null);
   const galleryInputRef = React.useRef<HTMLInputElement>(null);
   
   const [attachments, setAttachments] = React.useState<AttachmentFile[]>([]);
   const [showAttachmentSheet, setShowAttachmentSheet] = React.useState(false);
-  const [textareaHeight, setTextareaHeight] = React.useState(44); // Initial height
-  
-  const maxHeight = 120; // ~5 lines
-  const minHeight = 44;
 
-  // Auto-resize textarea
-  const adjustTextareaHeight = React.useCallback(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
+  // Calculate and emit total footer height
+  const updateFooterHeight = React.useCallback(() => {
+    if (containerRef.current && onHeightChange) {
+      const containerHeight = containerRef.current.offsetHeight;
+      const micOverlap = 24; // Mic button overlap
+      const navHeight = 60; // Bottom navigation height
+      const totalHeight = containerHeight + micOverlap + navHeight;
+      onHeightChange(totalHeight);
+    }
+  }, [onHeightChange]);
 
-    // Reset height to get accurate scrollHeight
-    textarea.style.height = `${minHeight}px`;
-    
-    const scrollHeight = Math.min(textarea.scrollHeight, maxHeight);
-    const newHeight = Math.max(scrollHeight, minHeight);
-    
-    textarea.style.height = `${newHeight}px`;
-    setTextareaHeight(newHeight);
-  }, []);
-
+  // Update height when content changes
   React.useEffect(() => {
-    adjustTextareaHeight();
-  }, [value, adjustTextareaHeight]);
+    updateFooterHeight();
+  }, [value, attachments, updateFooterHeight]);
+
+  // Initial height calculation
+  React.useEffect(() => {
+    const timer = setTimeout(updateFooterHeight, 100);
+    return () => clearTimeout(timer);
+  }, [updateFooterHeight]);
 
   const handleSend = () => {
     if (!value.trim() && attachments.length === 0) return;
@@ -60,12 +61,6 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
     // Clear input and attachments
     onChange('');
     setAttachments([]);
-    
-    // Reset textarea height
-    if (textareaRef.current) {
-      textareaRef.current.style.height = `${minHeight}px`;
-      setTextareaHeight(minHeight);
-    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -110,7 +105,7 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
   const hasContent = value.trim().length > 0;
 
   return (
-    <div className="w-full px-4 pb-2">
+    <div ref={containerRef} className="w-full px-4 pb-2">
       {/* File Previews */}
       {attachments.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-2">
@@ -148,10 +143,7 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
       )}
 
       {/* Input Container */}
-      <div 
-        className="relative flex items-end gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-white/20 dark:border-gray-700/20 px-4 py-2 transition-all duration-200"
-        style={{ minHeight: `${minHeight}px` }}
-      >
+      <div className="relative flex items-end gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-white/20 dark:border-gray-700/20 px-4 py-2 transition-all duration-200">
         {/* Attachment Button */}
         <Button
           type="button"
@@ -170,12 +162,7 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
           onChange={(e) => onChange(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
-          className="flex-1 min-h-0 resize-none border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-2 px-0"
-          style={{ 
-            height: `${textareaHeight}px`,
-            maxHeight: `${maxHeight}px`,
-            overflowY: textareaHeight >= maxHeight ? 'auto' : 'hidden'
-          }}
+          className="flex-1 min-h-[48px] max-h-[160px] resize-none border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-2 px-0 whitespace-pre-wrap break-words transition-all ease-in-out duration-200 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent"
           rows={1}
         />
 
