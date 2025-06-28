@@ -18,7 +18,7 @@ export function AppBottomTabs({
   onTabChange: (tab: string) => void;
 }) {
   return (
-    <nav className="w-full bg-white/10 backdrop-blur-md border-t border-white/20 px-2 sm:px-4 py-1 sm:py-2 flex justify-between items-center z-10">
+    <nav className="w-full bg-white/10 backdrop-blur-md border-t border-white/20 px-4 py-2 flex justify-between items-center z-10">
       <div className="flex flex-1 justify-around">
         {tabs.slice(0, 2).map((tab) => {
           const isActive = activeTab === tab.key;
@@ -37,12 +37,12 @@ export function AppBottomTabs({
             >
               <tab.icon
                 className={cn(
-                  "w-4 h-4 sm:w-5 sm:h-5 mb-0.5 transition-opacity duration-100",
+                  "w-5 h-5 mb-0.5 transition-opacity duration-100",
                   isActive ? "opacity-100" : "opacity-80"
                 )}
                 strokeWidth={2}
               />
-              <span className="text-xs leading-tight">
+              <span className="text-xs">
                 {tab.label}
               </span>
             </button>
@@ -67,12 +67,12 @@ export function AppBottomTabs({
             >
               <tab.icon
                 className={cn(
-                  "w-4 h-4 sm:w-5 sm:h-5 mb-0.5 transition-opacity duration-100",
+                  "w-5 h-5 mb-0.5 transition-opacity duration-100",
                   isActive ? "opacity-100" : "opacity-80"
                 )}
                 strokeWidth={2}
               />
-              <span className="text-xs leading-tight">
+              <span className="text-xs">
                 {tab.label}
               </span>
             </button>
