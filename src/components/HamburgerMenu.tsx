@@ -1,5 +1,5 @@
 import * as React from "react";
-import { User, FileText, Settings, BookOpen, LifeBuoy, Sun, Moon, X } from "lucide-react";
+import { User, FileText, Settings, BookOpen, LifeBuoy, Sun, Moon, LogOut } from "lucide-react";
 import { SheetContent } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
@@ -125,7 +125,8 @@ export function HamburgerMenu({
 
           {/* Logout Section */}
           <div className="mt-6 border-t border-border pt-4">
-            <button onClick={handleLogout} className="text-sm text-muted-foreground hover:text-foreground transition-all duration-150 ease-in-out">
+            <button onClick={handleLogout} className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90" type="button">
+              <LogOut className="w-6 h-6" />
               Log out
             </button>
           </div>
