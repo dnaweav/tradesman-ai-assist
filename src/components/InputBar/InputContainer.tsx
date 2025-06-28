@@ -28,18 +28,7 @@ export function InputContainer({
   textareaRef
 }: InputContainerProps) {
   return (
-    <div className="relative flex items-end gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/20 px-2 py-2 transition-all duration-200">
-      {/* Attachment Button - Always visible */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="flex-shrink-0 w-8 h-8 rounded-full bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200 transition-all duration-200"
-        onClick={onAttachmentClick}
-      >
-        <Paperclip className="w-5 h-5" />
-      </Button>
-
+    <div className="relative flex flex-col gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/20 px-4 py-3 transition-all duration-200">
       {/* Textarea */}
       <Textarea
         ref={textareaRef}
@@ -51,18 +40,32 @@ export function InputContainer({
         rows={1}
       />
 
-      {/* Send Button - Only visible when there's content or attachments */}
-      {(hasContent || hasAttachments) && (
+      {/* Buttons Row */}
+      <div className="flex items-center justify-between gap-3">
+        {/* Attachment Button - Always visible */}
         <Button
           type="button"
-          onClick={onSend}
-          disabled={!hasContent && !hasAttachments}
-          className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200"
+          variant="ghost"
           size="icon"
+          className="flex-shrink-0 w-8 h-8 rounded-full bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200 transition-all duration-200"
+          onClick={onAttachmentClick}
         >
-          <ArrowUp className="w-4 h-4" />
+          <Paperclip className="w-5 h-5" />
         </Button>
-      )}
+
+        {/* Send Button - Only visible when there's content or attachments */}
+        {(hasContent || hasAttachments) && (
+          <Button
+            type="button"
+            onClick={onSend}
+            disabled={!hasContent && !hasAttachments}
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200"
+            size="icon"
+          >
+            <ArrowUp className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
