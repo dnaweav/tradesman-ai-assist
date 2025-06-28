@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,6 +96,12 @@
 @layer base {
   * {
     @apply border-border;
+  }
+
+  /* Global zoom prevention - preserves scroll and tap functionality */
+  html, body {
+    touch-action: manipulation; /* Disables zoom but allows scroll & tap */
+    overscroll-behavior: contain;
   }
 
   body {
