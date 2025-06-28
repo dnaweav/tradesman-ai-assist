@@ -1,7 +1,6 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ArrowUp, Paperclip, Camera, Image, File, X } from "lucide-react";
 
@@ -27,24 +26,21 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
   
   const [attachments, setAttachments] = React.useState<AttachmentFile[]>([]);
   const [showAttachmentSheet, setShowAttachmentSheet] = React.useState(false);
-  const [textareaHeight, setTextareaHeight] = React.useState(44); // Initial height
   
-  const maxHeight = 120; // ~5 lines
-  const minHeight = 44;
-
-  // Auto-resize textarea
+  // Auto-resize textarea with smooth transitions
   const adjustTextareaHeight = React.useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
-    // Reset height to get accurate scrollHeight
-    textarea.style.height = `${minHeight}px`;
+    // Reset height to calculate new scroll height
+    textarea.style.height = '48px'; // min-h-[48px] equivalent
     
-    const scrollHeight = Math.min(textarea.scrollHeight, maxHeight);
-    const newHeight = Math.max(scrollHeight, minHeight);
+    // Calculate new height, capped at max height
+    const scrollHeight = textarea.scrollHeight;
+    const maxHeight = 160; // max-h-[160px] equivalent
+    const newHeight = Math.min(scrollHeight, maxHeight);
     
-    textarea.style.height = `${newHeight}px`;
-    setTextareaHeight(newHeight);
+    textarea.style.height = `${Math.max(newHeight, 48)}px`;
   }, []);
 
   React.useEffect(() => {
@@ -63,8 +59,7 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
     
     // Reset textarea height
     if (textareaRef.current) {
-      textareaRef.current.style.height = `${minHeight}px`;
-      setTextareaHeight(minHeight);
+      textareaRef.current.style.height = '48px';
     }
   };
 
@@ -107,74 +102,91 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
     setAttachments(prev => prev.filter(att => att.id !== id));
   };
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   const hasContent = value.trim().length > 0;
 
   return (
     <div className="w-full px-4 pb-2">
       {/* File Previews */}
       {attachments.length > 0 && (
-        <div className="mb-2 flex flex-wrap gap-2">
-          {attachments.map((attachment) => (
-            <div
-              key={attachment.id}
-              className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg p-2 border border-white/20 dark:border-gray-700/20"
-            >
-              <button
-                onClick={() => removeAttachment(attachment.id)}
-                className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center"
-                type="button"
+        <div className="mb-3 animate-in slide-in-from-bottom-2 duration-200">
+          <div className={`flex gap-2 ${attachments.length > 2 ? 'overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent pb-2' : 'flex-wrap'}`}>
+            {attachments.map((attachment) => (
+              <div
+                key={attachment.id}
+                className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-3 border border-white/20 dark:border-gray-700/20 shadow-sm transition-all duration-200 hover:shadow-md flex-shrink-0"
               >
-                <X className="w-3 h-3 text-white" />
-              </button>
-              
-              {attachment.type === 'image' && attachment.preview ? (
-                <img
-                  src={attachment.preview}
-                  alt="Preview"
-                  className="w-12 h-12 object-cover rounded"
-                />
-              ) : (
-                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
-                  <File className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+                <button
+                  onClick={() => removeAttachment(attachment.id)}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-md transition-all duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+                  type="button"
+                  aria-label={`Remove ${attachment.file.name}`}
+                  tabIndex={0}
+                >
+                  <X className="w-3 h-3 text-white" />
+                </button>
+                
+                {attachment.type === 'image' && attachment.preview ? (
+                  <img
+                    src={attachment.preview}
+                    alt="Preview"
+                    className="w-16 h-16 object-cover rounded-xl"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center">
+                    <File className="w-8 h-8 text-gray-600 dark:text-gray-400" />
+                  </div>
+                )}
+                
+                <div className="mt-2 max-w-16">
+                  <p className="text-xs text-gray-700 dark:text-gray-300 font-medium truncate">
+                    {attachment.file.name}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {formatFileSize(attachment.file.size)}
+                  </p>
                 </div>
-              )}
-              
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate max-w-12">
-                {attachment.file.name}
-              </p>
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Input Container */}
-      <div 
-        className="relative flex items-end gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-white/20 dark:border-gray-700/20 px-4 py-2 transition-all duration-200"
-        style={{ minHeight: `${minHeight}px` }}
-      >
+      <div className="relative flex items-end gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/20 shadow-md px-4 py-3 transition-all duration-200">
         {/* Attachment Button */}
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className="flex-shrink-0 w-8 h-8 text-gray-600 dark:text-gray-400 hover:bg-white/20 dark:hover:bg-gray-700/20"
+          className="flex-shrink-0 w-10 h-10 text-gray-600 dark:text-gray-400 hover:bg-white/20 dark:hover:bg-gray-700/20 hover:text-gray-800 dark:hover:text-gray-200 rounded-full transition-all duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
           onClick={() => setShowAttachmentSheet(true)}
+          aria-label="Add attachment"
+          tabIndex={0}
         >
           <Paperclip className="w-5 h-5" />
         </Button>
 
         {/* Textarea */}
-        <Textarea
+        <textarea
           ref={textareaRef}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
-          className="flex-1 min-h-0 resize-none border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-2 px-0"
+          aria-label="Describe the job, follow-up or task"
+          className="flex-1 min-h-[48px] max-h-[160px] resize-none whitespace-pre-wrap break-words overflow-hidden border-none bg-transparent focus-visible:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-0 px-0 transition-all ease-in-out duration-200 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent hover:scrollbar-thumb-gray-500"
           style={{ 
-            height: `${textareaHeight}px`,
-            maxHeight: `${maxHeight}px`,
-            overflowY: textareaHeight >= maxHeight ? 'auto' : 'hidden'
+            height: '48px',
+            lineHeight: '1.5',
+            fontFamily: 'inherit'
           }}
           rows={1}
         />
@@ -184,50 +196,58 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
           type="button"
           onClick={handleSend}
           disabled={!hasContent && attachments.length === 0}
-          className={`flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 ${
+          className={`flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white shadow-md transition-all duration-200 ease-in-out active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
             hasContent || attachments.length > 0 
-              ? 'opacity-100 scale-100' 
-              : 'opacity-0 scale-75 pointer-events-none'
+              ? 'opacity-100 scale-100 translate-x-0' 
+              : 'opacity-0 scale-75 translate-x-2 pointer-events-none'
           }`}
           size="icon"
+          aria-label="Send message"
+          tabIndex={hasContent || attachments.length > 0 ? 0 : -1}
         >
-          <ArrowUp className="w-4 h-4" />
+          <ArrowUp className="w-5 h-5" />
         </Button>
       </div>
 
       {/* Attachment Sheet */}
       <Sheet open={showAttachmentSheet} onOpenChange={setShowAttachmentSheet}>
-        <SheetContent side="bottom" className="rounded-t-3xl">
-          <SheetHeader>
-            <SheetTitle>Add Attachment</SheetTitle>
+        <SheetContent side="bottom" className="rounded-t-3xl border-t border-gray-200 dark:border-gray-700">
+          <SheetHeader className="pb-4">
+            <SheetTitle className="text-lg font-semibold">Add Attachment</SheetTitle>
           </SheetHeader>
           
-          <div className="grid grid-cols-3 gap-4 py-6">
+          <div className="grid grid-cols-3 gap-4 pb-6">
             <button
               onClick={() => cameraInputRef.current?.click()}
-              className="flex flex-col items-center gap-2 p-4 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
               type="button"
+              aria-label="Take photo with camera"
+              tabIndex={0}
             >
               <Camera className="w-8 h-8 text-blue-500" />
-              <span className="text-sm font-medium">Camera</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Camera</span>
             </button>
 
             <button
               onClick={() => galleryInputRef.current?.click()}
-              className="flex flex-col items-center gap-2 p-4 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
               type="button"
+              aria-label="Choose image from gallery"
+              tabIndex={0}
             >
               <Image className="w-8 h-8 text-green-500" />
-              <span className="text-sm font-medium">Gallery</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Gallery</span>
             </button>
 
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex flex-col items-center gap-2 p-4 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
               type="button"
+              aria-label="Select file"
+              tabIndex={0}
             >
               <File className="w-8 h-8 text-purple-500" />
-              <span className="text-sm font-medium">File</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">File</span>
             </button>
           </div>
         </SheetContent>
@@ -241,6 +261,8 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
         capture="environment"
         className="hidden"
         onChange={(e) => handleFileSelect(e.target.files, 'camera')}
+        aria-hidden="true"
+        tabIndex={-1}
       />
       
       <input
@@ -250,6 +272,8 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
         multiple
         className="hidden"
         onChange={(e) => handleFileSelect(e.target.files, 'gallery')}
+        aria-hidden="true"
+        tabIndex={-1}
       />
       
       <input
@@ -258,6 +282,8 @@ export function InputBar({ value, onChange, onSend, placeholder = "Describe the 
         multiple
         className="hidden"
         onChange={(e) => handleFileSelect(e.target.files, 'file')}
+        aria-hidden="true"
+        tabIndex={-1}
       />
     </div>
   );

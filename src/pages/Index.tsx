@@ -59,7 +59,7 @@ export default function Index() {
       </Sheet>
 
       {/* Main Content - Centered prompt area */}
-      <div className="flex flex-col items-center justify-center flex-grow pt-[64px] pb-[200px] px-4">
+      <div className="flex flex-col items-center justify-center flex-grow pt-[64px] pb-[240px] px-4">
         {/* Brand Logo */}
         <img 
           alt="theTradesmen.ai logo" 
@@ -71,11 +71,14 @@ export default function Index() {
           What can I help with?
         </h1>
 
-        <PromptPills onPrompt={handlePrompt} />
+        {/* Prompt Pills with dynamic spacing */}
+        <div className="mb-8">
+          <PromptPills onPrompt={handlePrompt} />
+        </div>
       </div>
 
-      {/* Input Bar - Fixed at bottom */}
-      <div className="fixed bottom-[120px] left-0 right-0 z-30">
+      {/* Input Bar - Fixed at bottom with proper spacing */}
+      <div className="fixed bottom-[140px] left-0 right-0 z-30">
         <InputBar 
           value={input} 
           onChange={setInput}
@@ -85,7 +88,7 @@ export default function Index() {
 
       {/* Floating Mic Button */}
       <button 
-        className="fixed bottom-[66px] left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-40 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
+        className="fixed bottom-[86px] left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-40 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300" 
         style={{
           boxShadow: "0 8px 32px #ffc00040"
         }} 
