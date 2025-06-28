@@ -1,4 +1,5 @@
 
+
 import React, { useRef, useState } from 'react';
 import { Camera, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -209,52 +210,55 @@ export default function BusinessProfile() {
             </div>
           </div>
 
-          {/* Email */}
-          <div className="bg-white rounded-2xl p-4 shadow-md">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700 mb-2 block">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={business.email || ''}
-              onChange={(e) => updateBusiness('email', e.target.value)}
-              disabled={!isAdmin}
-              className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
-              placeholder="Enter email address"
-            />
-          </div>
+          {/* Contact Details Card - Combined Email, Phone, and Website */}
+          <div className="bg-white rounded-2xl p-4 shadow-md space-y-4">
+            {/* Email */}
+            <div>
+              <Label htmlFor="email" className="text-sm font-medium text-gray-700 mb-2 block">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={business.email || ''}
+                onChange={(e) => updateBusiness('email', e.target.value)}
+                disabled={!isAdmin}
+                className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
+                placeholder="Enter email address"
+              />
+            </div>
 
-          {/* Phone */}
-          <div className="bg-white rounded-2xl p-4 shadow-md">
-            <Label htmlFor="phone" className="text-sm font-medium text-gray-700 mb-2 block">
-              Phone Number
-            </Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={business.phone || ''}
-              onChange={(e) => updateBusiness('phone', e.target.value)}
-              disabled={!isAdmin}
-              className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
-              placeholder="Enter phone number"
-            />
-          </div>
+            {/* Phone */}
+            <div>
+              <Label htmlFor="phone" className="text-sm font-medium text-gray-700 mb-2 block">
+                Phone Number
+              </Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={business.phone || ''}
+                onChange={(e) => updateBusiness('phone', e.target.value)}
+                disabled={!isAdmin}
+                className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
+                placeholder="Enter phone number"
+              />
+            </div>
 
-          {/* Website */}
-          <div className="bg-white rounded-2xl p-4 shadow-md">
-            <Label htmlFor="website" className="text-sm font-medium text-gray-700 mb-2 block">
-              Website
-            </Label>
-            <Input
-              id="website"
-              type="url"
-              value={business.website || ''}
-              onChange={(e) => updateBusiness('website', e.target.value)}
-              disabled={!isAdmin}
-              className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
-              placeholder="Enter website URL"
-            />
+            {/* Website */}
+            <div>
+              <Label htmlFor="website" className="text-sm font-medium text-gray-700 mb-2 block">
+                Website
+              </Label>
+              <Input
+                id="website"
+                type="url"
+                value={business.website || ''}
+                onChange={(e) => updateBusiness('website', e.target.value)}
+                disabled={!isAdmin}
+                className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
+                placeholder="Enter website URL"
+              />
+            </div>
           </div>
 
           {/* VAT Number */}
