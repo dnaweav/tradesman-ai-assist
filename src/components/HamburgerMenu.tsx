@@ -62,8 +62,13 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
     }
   };
 
+  const handleBusinessProfileClick = () => {
+    onClose();
+    navigate('/business-profile');
+  };
+
   const accountItems = [
-    { icon: <User />, label: "Business Profile" },
+    { icon: <User />, label: "Business Profile", onClick: handleBusinessProfileClick },
     { icon: <FileText />, label: "Docs" },
   ];
 
@@ -85,9 +90,10 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
           <div>
             <h2 className="text-sm text-muted-foreground uppercase mb-3 font-semibold tracking-wide">Account</h2>
             <div className="space-y-1">
-              {accountItems.map(({ icon, label }) => (
+              {accountItems.map(({ icon, label, onClick }) => (
                 <button
                   key={label}
+                  onClick={onClick}
                   className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90"
                   type="button"
                 >
