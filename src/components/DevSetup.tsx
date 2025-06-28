@@ -13,8 +13,23 @@ export function DevSetup() {
     console.log('Starting user profile setup...');
 
     try {
-      const userId = '5bf9fcc3-44f5-4afc-b88c-5903564f657e';
+      // Get the current user ID dynamically
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error('Error getting current user:', userError);
+        throw userError;
+      }
+
+      if (!user) {
+        console.error('No user logged in');
+        throw new Error('No user logged in');
+      }
+
+      const userId = user.id;
       const businessId = 'bb217af3-0bc4-441b-b37c-8a25c0d5b915';
+
+      console.log('Using current user ID:', userId);
 
       // Check if user profile already exists
       console.log('Checking for existing user profile...');
