@@ -21,7 +21,6 @@ interface InputBarProps {
 
 export function InputBar({ value, onChange, onSend, onHeightChange, placeholder = "Type or send a voice note..." }: InputBarProps) {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const cameraInputRef = React.useRef<HTMLInputElement>(null);
   const galleryInputRef = React.useRef<HTMLInputElement>(null);
@@ -29,51 +28,29 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   const [attachments, setAttachments] = React.useState<AttachmentFile[]>([]);
   const [showAttachmentSheet, setShowAttachmentSheet] = React.useState(false);
   
-  // Calculate and communicate total footer height
-  const calculateFooterHeight = React.useCallback(() => {
-    if (!onHeightChange) return;
-
-    const inputContainer = containerRef.current;
-    if (!inputContainer) return;
-
-    // Get the full height of the input container
-    const inputHeight = inputContainer.offsetHeight;
-    
-    // Account for mic button overlap (extends above input by 24px)
-    const micOverlap = 24;
-    
-    // Account for bottom navigation height
-    const navHeight = 80;
-    
-    // Total footer height: input height + mic overlap + nav height
-    const totalFooterHeight = inputHeight + micOverlap + navHeight;
-    
-    onHeightChange(totalFooterHeight);
-  }, [onHeightChange]);
-
-  // Auto-resize textarea and update footer height
+  // Auto-resize textarea and communicate height changes
   const adjustTextareaHeight = React.useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
-    // Reset height to recalculate
-    textarea.style.height = 'auto';
+    // Reset height to calculate new scroll height
+    textarea.style.height = '48px';
     
-    // Let Tailwind handle the height constraints
-    // The textarea will automatically adjust within min-h-[48px] max-h-[160px]
+    // Calculate new height, capped at max height
+    const scrollHeight = textarea.scrollHeight;
+    const maxHeight = 160;
+    const newHeight = Math.min(scrollHeight, maxHeight);
+    const finalHeight = Math.max(newHeight, 48);
     
-    // Calculate footer height after textarea adjustment
-    setTimeout(calculateFooterHeight, 0);
-  }, [calculateFooterHeight]);
+    textarea.style.height = `${finalHeight}px`;
+    
+    // Communicate height change to parent
+    onHeightChange?.(finalHeight);
+  }, [onHeightChange]);
 
   React.useEffect(() => {
     adjustTextareaHeight();
-  }, [value, adjustTextareaHeight, attachments.length]);
-
-  // Initial height calculation
-  React.useEffect(() => {
-    calculateFooterHeight();
-  }, [calculateFooterHeight]);
+  }, [value, adjustTextareaHeight]);
 
   const handleSend = () => {
     if (!value.trim() && attachments.length === 0) return;
@@ -85,10 +62,10 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
     onChange('');
     setAttachments([]);
     
-    // Reset textarea and recalculate height
+    // Reset textarea height
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      setTimeout(calculateFooterHeight, 0);
+      textareaRef.current.style.height = '48px';
+      onHeightChange?.(48);
     }
   };
 
@@ -142,7 +119,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   const hasContent = value.trim().length > 0;
 
   return (
-    <div ref={containerRef} className="w-full px-4 pb-4 pt-2">
+    <div className="w-full px-4 pb-4 pt-2">
       {/* File Previews */}
       {attachments.length > 0 && (
         <div className="mb-3 animate-in slide-in-from-bottom-2 duration-200">
@@ -211,7 +188,12 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
           aria-label="Describe the job, follow-up or task"
-          className="flex-1 min-h-[48px] max-h-[160px] whitespace-pre-wrap break-words resize-none transition-all ease-in-out duration-200 border-none bg-transparent focus-visible:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-0 px-0 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent hover:scrollbar-thumb-gray-500"
+          className="flex-1 min-h-[48px] max-h-[160px] resize-none whitespace-pre-wrap break-words border-none bg-transparent focus-visible:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-0 px-0 transition-all ease-in-out duration-200 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-transparent hover:scrollbar-thumb-blue-500"
+          style={{ 
+            height: '48px',
+            lineHeight: '1.5',
+            fontFamily: 'inherit'
+          }}
           rows={1}
         />
 
