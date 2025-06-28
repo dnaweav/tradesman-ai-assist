@@ -1,15 +1,19 @@
-
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Camera, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { TopNav } from '@/components/TopNav';
+import { AppBottomTabs } from '@/components/AppBottomTabs';
 import { useBusinessProfile } from '@/hooks/useBusinessProfile';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function BusinessProfile() {
+  const [activeTab, setActiveTab] = useState('home');
+  const navigate = useNavigate();
+  
   const {
     business,
     loading,
@@ -23,6 +27,14 @@ export default function BusinessProfile() {
   
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab === 'home') {
+      navigate('/');
+    }
+    // Add other navigation logic here as needed
+  };
 
   const handleLogoClick = () => {
     if (isAdmin && fileInputRef.current) {
@@ -90,7 +102,7 @@ export default function BusinessProfile() {
     <div className="min-h-screen bg-gradient-to-br from-[#eaeaea] via-white to-[#eaeaea]">
       <TopNav />
       
-      <div className="pt-20 pb-20 px-4 max-w-lg mx-auto">
+      <div className="pt-20 pb-24 px-4 max-w-lg mx-auto">
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Business Profile</h1>
@@ -255,7 +267,7 @@ export default function BusinessProfile() {
 
         {/* Save Button - Fixed at bottom */}
         {isAdmin && hasChanges && (
-          <div className="fixed bottom-4 left-4 right-4 max-w-lg mx-auto">
+          <div className="fixed bottom-20 left-4 right-4 max-w-lg mx-auto">
             <Button
               onClick={saveBusiness}
               disabled={saving || !hasChanges}
@@ -265,6 +277,14 @@ export default function BusinessProfile() {
             </Button>
           </div>
         )}
+      </div>
+
+      {/* Footer Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-[#3878eb] to-[#59a3f5] z-20">
+        <AppBottomTabs
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+        />
       </div>
     </div>
   );
