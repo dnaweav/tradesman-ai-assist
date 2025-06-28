@@ -14,7 +14,7 @@ export default function Index() {
   const [micActive, setMicActive] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState("home");
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const [footerHeight, setFooterHeight] = React.useState(200); // Initial estimated height
+  const [footerHeight, setFooterHeight] = React.useState(140); // Reduced initial height
 
   function handleMic() {
     setMicActive(true);
@@ -59,19 +59,19 @@ export default function Index() {
         <HamburgerMenu onClose={() => setMenuOpen(false)} />
       </Sheet>
 
-      {/* Main Content - Flexible area that compresses upward */}
+      {/* Main Content - Centered vertically with proper spacing */}
       <div 
-        className="flex flex-col items-center justify-center flex-grow pt-[64px] px-4 transition-all duration-200 ease-in-out"
-        style={{ paddingBottom: footerHeight }}
+        className="flex flex-col items-center justify-center flex-grow pt-16 px-4 transition-all duration-200 ease-in-out"
+        style={{ paddingBottom: `${footerHeight}px` }}
       >
         {/* Brand Logo */}
         <img 
           alt="theTradesmen.ai logo" 
           src="/lovable-uploads/1469542c-df73-456d-a0b0-baa6fdac06ca.png" 
-          className="w-64 h-64 mx-auto mb-4 object-scale-down" 
+          className="w-48 h-48 mx-auto mb-6 object-scale-down" 
         />
         
-        <h1 className="text-2xl md:text-3xl font-semibold text-white text-center mb-6 animate-fade-in">
+        <h1 className="text-2xl md:text-3xl font-semibold text-white text-center mb-8 animate-fade-in">
           What can I help with?
         </h1>
 
@@ -79,10 +79,10 @@ export default function Index() {
       </div>
 
       {/* Footer Container - Sticky positioning with all footer elements */}
-      <div className="sticky bottom-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-md">
+      <div className="sticky bottom-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-lg">
         {/* Mic Button - Positioned within footer container */}
         <button 
-          className="absolute left-1/2 bottom-[calc(100%-24px)] transform -translate-x-1/2 w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-60 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
+          className="absolute left-1/2 transform -translate-x-1/2 -top-6 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-60 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
           style={{
             boxShadow: "0 8px 32px #ffc00040"
           }} 
@@ -90,7 +90,7 @@ export default function Index() {
           onClick={handleMic} 
           type="button"
         >
-          <Mic className="w-6 h-6 text-black" strokeWidth={2} />
+          <Mic className="w-5 h-5 text-black" strokeWidth={2} />
         </button>
 
         {/* Input Bar */}

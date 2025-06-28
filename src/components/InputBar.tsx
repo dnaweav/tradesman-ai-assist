@@ -41,10 +41,26 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
     }
   }, [onHeightChange]);
 
+  // Auto-resize textarea based on content
+  const adjustTextareaHeight = React.useCallback(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      // Reset height to get accurate scrollHeight
+      textarea.style.height = '48px';
+      
+      // Calculate new height based on content
+      const newHeight = Math.min(Math.max(textarea.scrollHeight, 48), 160);
+      textarea.style.height = `${newHeight}px`;
+      
+      // Update footer height after textarea resize
+      setTimeout(updateFooterHeight, 0);
+    }
+  }, [updateFooterHeight]);
+
   // Update height when content changes
   React.useEffect(() => {
-    updateFooterHeight();
-  }, [value, attachments, updateFooterHeight]);
+    adjustTextareaHeight();
+  }, [value, attachments, adjustTextareaHeight]);
 
   // Initial height calculation
   React.useEffect(() => {
@@ -105,10 +121,10 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   const hasContent = value.trim().length > 0;
 
   return (
-    <div ref={containerRef} className="w-full px-4 pb-2">
+    <div ref={containerRef} className="w-full px-4 py-3">
       {/* File Previews */}
       {attachments.length > 0 && (
-        <div className="mb-2 flex flex-wrap gap-2">
+        <div className="mb-3 flex flex-wrap gap-2">
           {attachments.map((attachment) => (
             <div
               key={attachment.id}
@@ -143,7 +159,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
       )}
 
       {/* Input Container */}
-      <div className="relative flex items-end gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-white/20 dark:border-gray-700/20 px-4 py-2 transition-all duration-200">
+      <div className="relative flex items-end gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-white/20 dark:border-gray-700/20 px-4 py-2 transition-all duration-200">
         {/* Attachment Button */}
         <Button
           type="button"
@@ -162,7 +178,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
           onChange={(e) => onChange(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
-          className="flex-1 min-h-[48px] max-h-[160px] resize-none border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-2 px-0 whitespace-pre-wrap break-words transition-all ease-in-out duration-200 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent"
+          className="flex-1 min-h-[48px] max-h-[160px] resize-none border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-2 px-0 whitespace-pre-wrap break-words transition-all ease-in-out duration-200 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overflow-y-auto"
           rows={1}
         />
 
