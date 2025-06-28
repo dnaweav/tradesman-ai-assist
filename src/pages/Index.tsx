@@ -19,11 +19,6 @@ export default function Index() {
   const [footerHeight, setFooterHeight] = React.useState(140);
   const isKeyboardVisible = useKeyboardVisible();
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log('Index component - isKeyboardVisible changed:', isKeyboardVisible);
-  }, [isKeyboardVisible]);
-
   function handleMic() {
     setMicActive(true);
     setTimeout(() => setMicActive(false), 480);
@@ -42,13 +37,6 @@ export default function Index() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col overflow-hidden relative">
-      {/* Debug indicator - remove in production */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-20 right-4 z-[200] bg-red-500 text-white px-2 py-1 text-xs rounded">
-          Keyboard: {isKeyboardVisible ? 'VISIBLE' : 'HIDDEN'}
-        </div>
-      )}
-
       {/* Fixed Header */}
       <header className="fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
         <img 
