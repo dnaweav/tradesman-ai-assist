@@ -70,7 +70,7 @@ export function LogoUploadSection({ logoUrl, isAdmin, onLogoUpload, onLogoUpdate
         </Label>
         
         {logoUrl ? (
-          // Display uploaded logo with action buttons
+          // Display uploaded logo with action buttons positioned at bottom-right
           <div className="relative mx-auto w-24 rounded-2xl overflow-hidden bg-gray-50">
             <AspectRatio ratio={1} className="bg-gray-50">
               <img
@@ -80,20 +80,20 @@ export function LogoUploadSection({ logoUrl, isAdmin, onLogoUpload, onLogoUpdate
               />
             </AspectRatio>
             {isAdmin && (
-              <div className="absolute top-2 right-2 flex gap-2">
+              <div className="absolute bottom-1 right-1 flex gap-1">
                 <button
                   onClick={handleLogoClick}
-                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-lg transition-colors"
+                  className="bg-blue-500 hover:bg-blue-600 text-white p-1.5 rounded-full shadow-lg transition-colors"
                   title="Change logo"
                 >
-                  <Edit className="w-4 h-4" />
+                  <Edit className="w-3 h-3" />
                 </button>
                 <button
                   onClick={handleDeleteLogo}
-                  className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-colors"
+                  className="bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-lg transition-colors"
                   title="Delete logo"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3 h-3" />
                 </button>
               </div>
             )}
