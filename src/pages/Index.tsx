@@ -5,7 +5,9 @@ import { AppBottomTabs } from "@/components/AppBottomTabs";
 import { Sheet } from "@/components/ui/sheet";
 import { HamburgerMenu } from "@/components/HamburgerMenu";
 import { InputBar } from "@/components/InputBar";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { Menu, Mic } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const AVATAR_SRC = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=96&h=96&fit=facearea&facepad=2&q=80";
 
@@ -15,6 +17,7 @@ export default function Index() {
   const [activeTab, setActiveTab] = React.useState("home");
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [footerHeight, setFooterHeight] = React.useState(140);
+  const isKeyboardVisible = useKeyboardVisible();
 
   function handleMic() {
     setMicActive(true);
@@ -75,9 +78,12 @@ export default function Index() {
         <PromptPills onPrompt={handlePrompt} />
       </div>
 
-      {/* Microphone Button - Positioned relative to page content, 50px from bottom */}
+      {/* Microphone Button - Hidden when keyboard is visible */}
       <button 
-        className="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
+        className={cn(
+          "absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] hover:scale-105 transition-all duration-300 ease-in-out active:scale-95",
+          isKeyboardVisible ? "opacity-0 pointer-events-none" : "opacity-100"
+        )}
         style={{
           bottom: "50px",
           boxShadow: "0 8px 32px #ffc00040"
@@ -99,8 +105,12 @@ export default function Index() {
           onHeightChange={setFooterHeight}
         />
 
-        {/* Bottom Navigation */}
-        <AppBottomTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        {/* Bottom Navigation - Hidden when keyboard is visible */}
+        <AppBottomTabs 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab}
+          isKeyboardVisible={isKeyboardVisible}
+        />
       </div>
     </div>
   );

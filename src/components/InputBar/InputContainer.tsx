@@ -29,14 +29,14 @@ export function InputContainer({
 }: InputContainerProps) {
   return (
     <div className="relative flex flex-col gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/20 px-4 py-3 transition-all duration-200">
-      {/* Textarea */}
+      {/* Textarea with iOS zoom prevention */}
       <Textarea
         ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyPress={onKeyPress}
         placeholder={placeholder}
-        className="min-h-[48px] max-h-[160px] resize-none border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-2 px-0 whitespace-pre-wrap break-words transition-all ease-in-out duration-200 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overflow-y-auto"
+        className="min-h-[48px] max-h-[160px] resize-none border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 dark:placeholder:text-gray-400 text-gray-900 dark:text-white py-2 px-0 whitespace-pre-wrap break-words transition-all ease-in-out duration-200 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overflow-y-auto text-base md:text-sm"
         rows={1}
       />
 

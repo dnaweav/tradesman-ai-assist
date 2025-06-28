@@ -13,12 +13,17 @@ const tabs = [
 export function AppBottomTabs({
   activeTab,
   onTabChange,
+  isKeyboardVisible = false,
 }: {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  isKeyboardVisible?: boolean;
 }) {
   return (
-    <nav className="w-full bg-white/10 backdrop-blur-md border-t border-white/20 px-4 py-2 flex justify-between items-center z-10">
+    <nav className={cn(
+      "w-full bg-white/10 backdrop-blur-md border-t border-white/20 px-4 py-2 flex justify-between items-center z-10 transition-transform duration-300 ease-in-out",
+      isKeyboardVisible && "transform translate-y-full"
+    )}>
       <div className="flex flex-1 justify-around">
         {tabs.slice(0, 2).map((tab) => {
           const isActive = activeTab === tab.key;
