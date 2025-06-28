@@ -90,7 +90,7 @@ export default function Index() {
       </button>
 
       {/* Footer Container - Sticky positioning with input and nav */}
-      <div className="sticky bottom-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-lg">
+      <div className="sticky bottom-0 z-50 w-full backdrop-blur-md shadow-lg">
         {/* Input Bar */}
         <InputBar 
           value={input} 
