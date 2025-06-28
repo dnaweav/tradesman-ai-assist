@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { User, FileText, Settings, BookOpen, LifeBuoy, Sun, Moon, LogOut, Building2 } from "lucide-react";
 import { SheetContent } from "@/components/ui/sheet";
@@ -7,24 +6,25 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-
 export function HamburgerMenu({
   onClose
 }: {
   onClose: () => void;
 }) {
   const [darkMode, setDarkMode] = React.useState(() => typeof window !== "undefined" && window.localStorage.getItem("tmode") === "dark" ? true : false);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const navigate = useNavigate();
-
   React.useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
     window.localStorage.setItem("tmode", darkMode ? "dark" : "light");
   }, [darkMode]);
-
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
+      const {
+        error
+      } = await supabase.auth.signOut();
       if (error) {
         toast({
           title: "Error",
@@ -49,51 +49,37 @@ export function HamburgerMenu({
       });
     }
   };
-
   const handleUserProfileClick = () => {
     onClose();
     navigate('/user-profile');
   };
-
   const handleBusinessProfileClick = () => {
     onClose();
     navigate('/business-profile');
   };
-
-  const accountItems = [
-    {
-      icon: <User />,
-      label: "User Profile",
-      onClick: handleUserProfileClick
-    },
-    {
-      icon: <Building2 />,
-      label: "Business Profile",
-      onClick: handleBusinessProfileClick
-    },
-    {
-      icon: <FileText />,
-      label: "Docs"
-    }
-  ];
-
-  const supportItems = [
-    {
-      icon: <LifeBuoy />,
-      label: "Support"
-    },
-    {
-      icon: <Settings />,
-      label: "Settings"
-    },
-    {
-      icon: <BookOpen />,
-      label: "Learn"
-    }
-  ];
-
-  return (
-    <SheetContent side="right" className="w-80 backdrop-blur-md border-l border-white/20 shadow-lg z-[150] bg-white/70">
+  const accountItems = [{
+    icon: <User />,
+    label: "User Profile",
+    onClick: handleUserProfileClick
+  }, {
+    icon: <Building2 />,
+    label: "Business Profile",
+    onClick: handleBusinessProfileClick
+  }, {
+    icon: <FileText />,
+    label: "Docs"
+  }];
+  const supportItems = [{
+    icon: <LifeBuoy />,
+    label: "Support"
+  }, {
+    icon: <Settings />,
+    label: "Settings"
+  }, {
+    icon: <BookOpen />,
+    label: "Learn"
+  }];
+  return <SheetContent side="right" className="w-80 backdrop-blur-md border-l border-white/20 shadow-lg z-[150] bg-[#ecfaff]/[0.91]">
       <div className="flex flex-col h-full">
         {/* Menu Content */}
         <div className="flex-1 flex flex-col pt-12 pb-6 px-4 space-y-6">
@@ -101,17 +87,16 @@ export function HamburgerMenu({
           <div>
             <h2 className="text-sm text-muted-foreground uppercase mb-3 font-semibold tracking-wide">Account</h2>
             <div className="space-y-1">
-              {accountItems.map(({ icon, label, onClick }) => (
-                <button
-                  key={label}
-                  onClick={onClick}
-                  className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90"
-                  type="button"
-                >
-                  {React.cloneElement(icon, { className: "w-6 h-6" })} 
+              {accountItems.map(({
+              icon,
+              label,
+              onClick
+            }) => <button key={label} onClick={onClick} className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90" type="button">
+                  {React.cloneElement(icon, {
+                className: "w-6 h-6"
+              })} 
                   {label}
-                </button>
-              ))}
+                </button>)}
             </div>
           </div>
           
@@ -119,16 +104,15 @@ export function HamburgerMenu({
           <div>
             <h2 className="text-sm text-muted-foreground uppercase mb-3 font-semibold tracking-wide">Support</h2>
             <div className="space-y-1">
-              {supportItems.map(({ icon, label }) => (
-                <button
-                  key={label}
-                  className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90"
-                  type="button"
-                >
-                  {React.cloneElement(icon, { className: "w-6 h-6" })} 
+              {supportItems.map(({
+              icon,
+              label
+            }) => <button key={label} className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90" type="button">
+                  {React.cloneElement(icon, {
+                className: "w-6 h-6"
+              })} 
                   {label}
-                </button>
-              ))}
+                </button>)}
             </div>
           </div>
           
@@ -148,16 +132,11 @@ export function HamburgerMenu({
 
         {/* Logout Section - Fixed to bottom */}
         <div className="px-4 pb-6 border-t border-border pt-4">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90"
-            type="button"
-          >
+          <button onClick={handleLogout} className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90" type="button">
             <LogOut className="w-6 h-6" />
             Log out
           </button>
         </div>
       </div>
-    </SheetContent>
-  );
+    </SheetContent>;
 }
