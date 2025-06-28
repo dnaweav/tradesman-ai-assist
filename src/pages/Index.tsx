@@ -33,7 +33,7 @@ export default function Index() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col overflow-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col overflow-hidden relative">
       {/* Fixed Header */}
       <header className="fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
         <img 
@@ -75,9 +75,9 @@ export default function Index() {
         <PromptPills onPrompt={handlePrompt} />
       </div>
 
-      {/* Microphone Button - Fixed position that doesn't move with input expansion */}
+      {/* Microphone Button - Positioned relative to page content, 50px from bottom */}
       <button 
-        className="fixed left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
+        className="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
         style={{
           bottom: "50px",
           boxShadow: "0 8px 32px #ffc00040"
