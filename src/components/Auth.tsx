@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 function validateEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -26,6 +27,7 @@ export function AuthScreen() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Validation errors
   const emailError = touched.email && !email ? "Please enter your email" : touched.email && !validateEmail(email) ? "Please enter a valid email address" : "";
@@ -58,6 +60,8 @@ export function AuthScreen() {
         title: "Signed In!",
         description: "Successfully signed in."
       });
+      // Explicitly navigate to home page after successful login
+      navigate('/');
     } else {
       toast({
         title: "Login failed",
