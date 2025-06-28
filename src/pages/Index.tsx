@@ -35,20 +35,20 @@ export default function Index() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col overflow-hidden">
       {/* Fixed Header */}
-      <header className="fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
+      <header className="fixed top-0 w-full px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
         <img 
           src={AVATAR_SRC} 
-          className="w-10 h-10 rounded-full object-cover border-2 border-white/30 shadow" 
+          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-white/30 shadow" 
           alt="User avatar" 
         />
         
         <button 
           aria-label="Open menu" 
           onClick={() => setMenuOpen(true)} 
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 active:scale-95 transition-all duration-150 ease-in-out focus-visible:outline-none" 
+          className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 active:scale-95 transition-all duration-150 ease-in-out focus-visible:outline-none" 
           type="button"
         >
-          <Menu className="w-6 h-6 text-white" />
+          <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         </button>
       </header>
 
@@ -57,40 +57,43 @@ export default function Index() {
         <HamburgerMenu onClose={() => setMenuOpen(false)} />
       </Sheet>
 
-      {/* Main Content - Centered vertically with proper spacing */}
+      {/* Main Content - Responsive spacing */}
       <div 
-        className="flex flex-col items-center justify-center flex-grow pt-16 px-4 transition-all duration-200 ease-in-out"
-        style={{ paddingBottom: "20px" }}
+        className="flex flex-col items-center justify-center flex-grow pt-12 sm:pt-16 px-3 sm:px-4 transition-all duration-200 ease-in-out"
+        style={{ 
+          paddingBottom: `${footerHeight + 20}px`,
+          minHeight: `calc(100vh - ${footerHeight}px)` 
+        }}
       >
         <img 
           alt="theTradesmen.ai logo" 
           src="/lovable-uploads/1469542c-df73-456d-a0b0-baa6fdac06ca.png" 
-          className="w-48 h-48 mx-auto mb-6 object-scale-down" 
+          className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6 object-scale-down" 
         />
         
-        <h1 className="text-2xl md:text-3xl font-semibold text-white text-center mb-8 animate-fade-in">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white text-center mb-6 sm:mb-8 animate-fade-in px-2">
           What can I help with?
         </h1>
 
         <PromptPills onPrompt={handlePrompt} />
       </div>
 
-      {/* Microphone Button - Fixed position that doesn't move with input expansion */}
+      {/* Microphone Button - Dynamic positioning */}
       <button 
-        className="fixed left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
+        className="fixed left-1/2 transform -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 sm:border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
         style={{
-          bottom: "50px",
+          bottom: `${footerHeight + 15}px`,
           boxShadow: "0 8px 32px #ffc00040"
         }} 
         aria-label="Voice input" 
         onClick={handleMic} 
         type="button"
       >
-        <Mic className="w-5 h-5 text-black" strokeWidth={2} />
+        <Mic className="w-4 h-4 sm:w-5 sm:h-5 text-black" strokeWidth={2} />
       </button>
 
-      {/* Footer Container - Sticky positioning with input and nav */}
-      <div className="sticky bottom-0 z-50 w-full backdrop-blur-md shadow-lg">
+      {/* Footer Container - Responsive */}
+      <div className="sticky bottom-0 z-50 w-full backdrop-blur-md shadow-lg pb-safe">
         {/* Input Bar */}
         <InputBar 
           value={input} 

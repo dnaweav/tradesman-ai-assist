@@ -16,7 +16,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   const updateFooterHeight = React.useCallback(() => {
     if (containerRef.current && onHeightChange) {
       const containerHeight = containerRef.current.offsetHeight;
-      const navHeight = 60; // Bottom navigation height
+      const navHeight = window.innerWidth <= 375 ? 48 : 60; // Smaller nav on iPhone SE
       const totalHeight = containerHeight + navHeight;
       onHeightChange(totalHeight);
     }
@@ -26,8 +26,9 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   const adjustTextareaHeight = React.useCallback(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = '48px';
-      const newHeight = Math.min(Math.max(textarea.scrollHeight, 48), 160);
+      const minHeight = window.innerWidth <= 375 ? 40 : 48; // Smaller min height on iPhone SE
+      textarea.style.height = `${minHeight}px`;
+      const newHeight = Math.min(Math.max(textarea.scrollHeight, minHeight), 160);
       textarea.style.height = `${newHeight}px`;
       setTimeout(updateFooterHeight, 0);
     }
@@ -97,7 +98,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   console.log('InputBar state:', { value, hasContent, attachmentsCount: attachments.length });
 
   return (
-    <div ref={containerRef} className="w-full px-4 py-3 pb-6">
+    <div ref={containerRef} className="w-full px-3 sm:px-4 py-2 sm:py-3 pb-3 sm:pb-6">
       <AttachmentPreview 
         attachments={attachments}
         onRemove={removeAttachment}
