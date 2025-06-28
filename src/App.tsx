@@ -9,6 +9,7 @@ import { AuthScreen } from "@/components/Auth";
 import Index from "./pages/Index";
 import BusinessProfile from "./pages/BusinessProfile";
 import UserProfile from "./pages/UserProfile";
+import ChatSession from "./pages/ChatSession";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,11 @@ const App = () => (
           <Route path="/" element={
             <AuthGuard>
               <Index />
+            </AuthGuard>
+          } />
+          <Route path="/chat/:sessionId" element={
+            <AuthGuard>
+              <ChatSession />
             </AuthGuard>
           } />
           <Route path="/business-profile" element={

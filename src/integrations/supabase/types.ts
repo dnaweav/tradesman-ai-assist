@@ -51,6 +51,68 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_sessions: {
+        Row: {
+          contact_id: string | null
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          chat_session_id: string
+          content: string
+          created_at: string
+          id: string
+          sender: string
+          updated_at: string
+        }
+        Insert: {
+          chat_session_id: string
+          content: string
+          created_at?: string
+          id?: string
+          sender: string
+          updated_at?: string
+        }
+        Update: {
+          chat_session_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          sender?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_chat_session_id_fkey"
+            columns: ["chat_session_id"]
+            isOneToOne: false
+            referencedRelation: "chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_profiles: {
         Row: {
           business_id: string
