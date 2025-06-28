@@ -8,6 +8,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import { AuthScreen } from "@/components/Auth";
 import Index from "./pages/Index";
 import BusinessProfile from "./pages/BusinessProfile";
+import UserProfile from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,11 @@ const App = () => (
           <Route path="/business-profile" element={
             <AuthGuard>
               <BusinessProfile />
+            </AuthGuard>
+          } />
+          <Route path="/user-profile" element={
+            <AuthGuard>
+              <UserProfile />
             </AuthGuard>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

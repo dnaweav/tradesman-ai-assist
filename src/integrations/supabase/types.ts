@@ -54,20 +54,38 @@ export type Database = {
       user_profiles: {
         Row: {
           business_id: string
+          email: string | null
+          first_name: string | null
           id: string
           is_admin: boolean
+          last_name: string | null
+          phone_number: string | null
+          profile_photo_url: string | null
+          role_title: string | null
           user_id: string
         }
         Insert: {
           business_id: string
+          email?: string | null
+          first_name?: string | null
           id?: string
           is_admin?: boolean
+          last_name?: string | null
+          phone_number?: string | null
+          profile_photo_url?: string | null
+          role_title?: string | null
           user_id: string
         }
         Update: {
           business_id?: string
+          email?: string | null
+          first_name?: string | null
           id?: string
           is_admin?: boolean
+          last_name?: string | null
+          phone_number?: string | null
+          profile_photo_url?: string | null
+          role_title?: string | null
           user_id?: string
         }
         Relationships: [
