@@ -155,7 +155,11 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
           type="button"
           variant="ghost"
           size="icon"
-          className="flex-shrink-0 w-8 h-8 rounded-full bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200"
+          className={`flex-shrink-0 w-8 h-8 rounded-full bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200 transition-all duration-200 ${
+            hasContent 
+              ? 'opacity-100 scale-100' 
+              : 'opacity-0 scale-75 pointer-events-none'
+          }`}
           onClick={() => setShowAttachmentSheet(true)}
         >
           <Paperclip className="w-5 h-5" />
