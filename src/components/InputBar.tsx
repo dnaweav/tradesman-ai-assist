@@ -97,7 +97,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   console.log('InputBar state:', { value, hasContent, attachmentsCount: attachments.length });
 
   return (
-    <div ref={containerRef} className="w-full px-2 py-3 pb-6">
+    <div ref={containerRef} className="w-full px-4 py-3 pb-6">
       <AttachmentPreview 
         attachments={attachments}
         onRemove={removeAttachment}
