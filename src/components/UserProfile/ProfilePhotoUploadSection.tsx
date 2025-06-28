@@ -82,20 +82,20 @@ export function ProfilePhotoUploadSection({
                 className="w-full h-full object-cover"
               />
             </AspectRatio>
-            <div className="absolute top-2 right-2 flex gap-2">
+            <div className="absolute bottom-1 right-1 flex gap-1">
               <button
                 onClick={handlePhotoClick}
-                className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-lg transition-colors"
+                className="bg-blue-500 hover:bg-blue-600 text-white p-1.5 rounded-full shadow-lg transition-colors"
                 title="Change photo"
               >
-                <Edit className="w-4 h-4" />
+                <Edit className="w-3 h-3" />
               </button>
               <button
                 onClick={handleDeletePhoto}
-                className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-colors"
+                className="bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-lg transition-colors"
                 title="Delete photo"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3 h-3" />
               </button>
             </div>
           </div>
