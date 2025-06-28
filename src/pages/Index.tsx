@@ -79,7 +79,7 @@ export default function Index() {
       <button 
         className="fixed left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
         style={{
-          bottom: "60px",
+          bottom: "50px",
           boxShadow: "0 8px 32px #ffc00040"
         }} 
         aria-label="Voice input" 
