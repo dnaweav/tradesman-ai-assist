@@ -29,6 +29,8 @@ interface DatabaseMessage {
 }
 
 export function useChatSession(sessionId: string) {
+  console.log('useChatSession hook initialized with sessionId:', sessionId);
+  
   const { user } = useAuth();
   const { toast } = useToast();
   
@@ -48,10 +50,16 @@ export function useChatSession(sessionId: string) {
 
   // Load chat session and messages with improved error handling
   const loadChatSession = useCallback(async (retryCount = 0) => {
-    if (!user || !sessionId) return;
+    console.log('loadChatSession called:', { user: !!user, sessionId, retryCount });
+    
+    if (!user || !sessionId) {
+      console.log('Missing user or sessionId, returning early');
+      return;
+    }
 
     try {
       setError(null);
+      console.log('Attempting to load existing session');
       
       // Try to load existing session first
       let { data: sessionData, error: sessionError } = await supabase
@@ -60,6 +68,8 @@ export function useChatSession(sessionId: string) {
         .eq('id', sessionId)
         .maybeSingle();
 
+      console.log('Session query result:', { sessionData, sessionError });
+
       if (sessionError && sessionError.code !== 'PGRST116') {
         console.error('Error loading chat session:', sessionError);
         throw sessionError;
@@ -67,6 +77,7 @@ export function useChatSession(sessionId: string) {
 
       // If session doesn't exist, create it with retry logic
       if (!sessionData) {
+        console.log('Session not found, creating new session');
         try {
           const { data: newSession, error: createError } = await supabase
             .from('chat_sessions')
@@ -77,6 +88,8 @@ export function useChatSession(sessionId: string) {
             })
             .select()
             .single();
+
+          console.log('Session creation result:', { newSession, createError });
 
           if (createError) {
             // Handle duplicate key constraint violation
@@ -92,6 +105,8 @@ export function useChatSession(sessionId: string) {
                 .eq('id', sessionId)
                 .maybeSingle();
 
+              console.log('Retry fetch result:', { existingSession, fetchError });
+
               if (fetchError) {
                 throw fetchError;
               }
@@ -101,6 +116,7 @@ export function useChatSession(sessionId: string) {
               } else {
                 // Retry with exponential backoff
                 const delay = Math.pow(2, retryCount) * 100;
+                console.log('Retrying with delay:', delay);
                 await new Promise(resolve => setTimeout(resolve, delay));
                 return loadChatSession(retryCount + 1);
               }
@@ -116,14 +132,18 @@ export function useChatSession(sessionId: string) {
         }
       }
 
+      console.log('Setting session data:', sessionData);
       setSession(sessionData);
 
       // Load messages
+      console.log('Loading messages for session:', sessionId);
       const { data: messagesData, error: messagesError } = await supabase
         .from('messages')
         .select('*')
         .eq('chat_session_id', sessionId)
         .order('created_at', { ascending: true });
+
+      console.log('Messages query result:', { messagesData, messagesError });
 
       if (messagesError) {
         console.error('Error loading messages:', messagesError);
@@ -131,6 +151,7 @@ export function useChatSession(sessionId: string) {
         setMessages([]);
       } else {
         const convertedMessages = (messagesData || []).map(convertDatabaseMessage);
+        console.log('Setting messages:', convertedMessages.length);
         setMessages(convertedMessages);
       }
     } catch (error) {
@@ -138,6 +159,7 @@ export function useChatSession(sessionId: string) {
       setError('Failed to load chat session. Please try again.');
       
       // Create a fallback session to prevent blank page
+      console.log('Creating fallback session');
       setSession({
         id: sessionId,
         title: 'New Chat',
@@ -146,15 +168,22 @@ export function useChatSession(sessionId: string) {
       });
       setMessages([]);
     } finally {
+      console.log('Setting loading to false');
       setLoading(false);
     }
   }, [user, sessionId]);
 
   // Send message and get AI response
   const sendMessage = useCallback(async (content: string, files: File[] = []) => {
-    if (!user || !sessionId || !content.trim()) return;
+    console.log('sendMessage called:', { content, filesCount: files.length });
+    
+    if (!user || !sessionId || !content.trim()) {
+      console.log('Invalid send message parameters');
+      return;
+    }
 
     try {
+      console.log('Saving user message');
       // Save user message
       const { data: userMessage, error: userError } = await supabase
         .from('messages')
@@ -178,16 +207,19 @@ export function useChatSession(sessionId: string) {
 
       // Add user message to local state
       const convertedUserMessage = convertDatabaseMessage(userMessage as DatabaseMessage);
+      console.log('Adding user message to state:', convertedUserMessage);
       setMessages(prev => [...prev, convertedUserMessage]);
 
       // Start streaming AI response
       setIsStreaming(true);
+      console.log('Starting AI response simulation');
       
       // TODO: Implement actual AI streaming response
       // For now, simulate a response
       setTimeout(async () => {
         const aiResponse = `I understand you said: "${content}". This is a placeholder AI response. In the full implementation, this would be a real AI response from GPT.`;
         
+        console.log('Saving AI response');
         const { data: aiMessage, error: aiError } = await supabase
           .from('messages')
           .insert({
@@ -202,10 +234,12 @@ export function useChatSession(sessionId: string) {
           console.error('Error saving AI message:', aiError);
         } else {
           const convertedAiMessage = convertDatabaseMessage(aiMessage as DatabaseMessage);
+          console.log('Adding AI message to state:', convertedAiMessage);
           setMessages(prev => [...prev, convertedAiMessage]);
         }
         
         setIsStreaming(false);
+        console.log('AI response complete');
       }, 1500);
 
     } catch (error) {
@@ -220,6 +254,7 @@ export function useChatSession(sessionId: string) {
   }, [user, sessionId, toast]);
 
   useEffect(() => {
+    console.log('useEffect triggered for loadChatSession');
     loadChatSession();
   }, [loadChatSession]);
 

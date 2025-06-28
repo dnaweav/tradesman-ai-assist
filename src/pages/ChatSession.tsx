@@ -7,10 +7,13 @@ import { InputBar } from "@/components/InputBar";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useChatSession } from "@/hooks/useChatSession";
 import { useAuth } from "@/hooks/useAuth";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { cn } from "@/lib/utils";
 import { Mic } from "lucide-react";
 
 export default function ChatSession() {
+  console.log('ChatSession component rendering');
+  
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,6 +25,8 @@ export default function ChatSession() {
   const [isAutoReadEnabled, setIsAutoReadEnabled] = React.useState(false);
   const [initialMessageSent, setInitialMessageSent] = React.useState(false);
   
+  console.log('ChatSession state:', { sessionId, user: !!user, initialMessageSent });
+
   const {
     session,
     messages,
@@ -31,11 +36,26 @@ export default function ChatSession() {
     error
   } = useChatSession(sessionId || '');
 
+  console.log('ChatSession hook state:', { 
+    sessionExists: !!session, 
+    messagesCount: messages.length, 
+    loading, 
+    error 
+  });
+
   // Handle initial message from navigation state
   React.useEffect(() => {
     const state = location.state as { initialMessage?: string; initialFiles?: File[] } | null;
     
+    console.log('Initial message effect:', { 
+      hasInitialMessage: !!state?.initialMessage, 
+      initialMessageSent, 
+      loading, 
+      sessionExists: !!session 
+    });
+    
     if (state?.initialMessage && !initialMessageSent && !loading && session) {
+      console.log('Sending initial message:', state.initialMessage);
       sendMessage(state.initialMessage, state.initialFiles || []);
       setInitialMessageSent(true);
       
@@ -47,6 +67,7 @@ export default function ChatSession() {
   const handleSend = async (message: string, files: File[]) => {
     if (!message.trim() && files.length === 0) return;
     
+    console.log('Sending message:', message);
     await sendMessage(message, files);
     setInput('');
   };
@@ -62,11 +83,13 @@ export default function ChatSession() {
   };
 
   if (!user) {
+    console.log('No user, redirecting to auth');
     navigate('/auth');
     return null;
   }
 
   if (loading) {
+    console.log('Loading state - showing loading UI');
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-500">Loading chat...</div>
@@ -76,6 +99,7 @@ export default function ChatSession() {
 
   // Show error state instead of blank page
   if (error) {
+    console.log('Error state:', error);
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <ChatHeader
@@ -105,6 +129,8 @@ export default function ChatSession() {
     );
   }
 
+  console.log('Rendering main chat UI');
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Fixed Header */}
@@ -115,13 +141,34 @@ export default function ChatSession() {
         onAutoReadToggle={setIsAutoReadEnabled}
       />
 
-      {/* Message Thread - Full height with proper spacing */}
+      {/* Message Thread - Wrapped in ErrorBoundary */}
       <div className="flex-1 overflow-hidden pt-16 pb-32">
-        <MessageThread
-          messages={messages}
-          isStreaming={isStreaming}
-          isAutoReadEnabled={isAutoReadEnabled}
-        />
+        <ErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center">
+              <div className="text-center px-4">
+                <div className="text-red-500 text-lg font-semibold mb-2">
+                  Chat Display Error
+                </div>
+                <div className="text-gray-600 mb-4">
+                  There was a problem displaying the chat messages.
+                </div>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  Refresh Page
+                </button>
+              </div>
+            </div>
+          }
+        >
+          <MessageThread
+            messages={messages}
+            isStreaming={isStreaming}
+            isAutoReadEnabled={isAutoReadEnabled}
+          />
+        </ErrorBoundary>
       </div>
 
       {/* Microphone Button - Hidden when keyboard is visible */}

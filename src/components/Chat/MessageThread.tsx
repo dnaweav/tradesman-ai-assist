@@ -19,39 +19,20 @@ interface MessageThreadProps {
 }
 
 export function MessageThread({ messages, isStreaming, isAutoReadEnabled }: MessageThreadProps) {
+  console.log('MessageThread render:', { messagesCount: messages.length, isStreaming });
+  
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const { speak, stop, isPlaying } = useTextToSpeech();
   const lastAiMessageRef = React.useRef<string>('');
 
-  // Auto-scroll to bottom when new messages arrive
-  React.useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, isStreaming]);
-
-  // Auto-read new AI messages
-  React.useEffect(() => {
-    if (!isAutoReadEnabled || messages.length === 0) return;
-
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.sender === 'ai' && lastMessage.content !== lastAiMessageRef.current) {
-      lastAiMessageRef.current = lastMessage.content;
-      speak(lastMessage.content);
-    }
-  }, [messages, isAutoReadEnabled, speak]);
-
-  // Stop reading when user starts typing (handled by parent component)
-  React.useEffect(() => {
-    return () => stop();
-  }, [stop]);
-
-  if (messages.length === 0 && !isStreaming) {
-    return <EmptyState />;
-  }
-
-  // Group messages by date
+  // Group messages by date - moved to top to fix hook order
   const groupedMessages = React.useMemo(() => {
+    console.log('Grouping messages:', messages.length);
+    
+    if (!messages || messages.length === 0) {
+      return [];
+    }
+
     const groups: { date: string; messages: Message[] }[] = [];
     let currentDate = '';
     let currentGroup: Message[] = [];
@@ -76,6 +57,33 @@ export function MessageThread({ messages, isStreaming, isAutoReadEnabled }: Mess
 
     return groups;
   }, [messages]);
+
+  // Auto-scroll to bottom when new messages arrive
+  React.useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isStreaming]);
+
+  // Auto-read new AI messages
+  React.useEffect(() => {
+    if (!isAutoReadEnabled || messages.length === 0) return;
+
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.sender === 'ai' && lastMessage.content !== lastAiMessageRef.current) {
+      lastAiMessageRef.current = lastMessage.content;
+      speak(lastMessage.content);
+    }
+  }, [messages, isAutoReadEnabled, speak]);
+
+  // Stop reading when component unmounts
+  React.useEffect(() => {
+    return () => stop();
+  }, [stop]);
+
+  if (messages.length === 0 && !isStreaming) {
+    return <EmptyState />;
+  }
 
   return (
     <div 
