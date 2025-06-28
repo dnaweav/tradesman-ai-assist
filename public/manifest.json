@@ -4,7 +4,7 @@
   "short_name": "Tradesmen",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#3591dd",
   "theme_color": "#007aff",
   "orientation": "portrait",
   "icons": [
