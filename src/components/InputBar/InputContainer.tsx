@@ -27,23 +27,18 @@ export function InputContainer({
   placeholder,
   textareaRef
 }: InputContainerProps) {
-  const shouldShowSendButton = hasContent || hasAttachments;
-
-  console.log('InputContainer render state:', { 
-    hasContent, 
-    hasAttachments, 
-    shouldShowSendButton,
-    valueLength: value.length 
-  });
-
   return (
-    <div className="relative flex items-end gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/20 px-4 py-2 transition-all duration-200">
-      {/* Attachment Button - Always visible */}
+    <div className="relative flex items-end gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/20 px-2 py-2 transition-all duration-200">
+      {/* Attachment Button - FIXED: Should be visible when NO content */}
       <Button
         type="button"
         variant="ghost"
         size="icon"
-        className="flex-shrink-0 w-8 h-8 rounded-full bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200 transition-all duration-200"
+        className={`flex-shrink-0 w-8 h-8 rounded-full bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200 transition-all duration-200 ${
+          !hasContent && !hasAttachments
+            ? 'opacity-100 scale-100' 
+            : 'opacity-0 scale-75 pointer-events-none'
+        }`}
         onClick={onAttachmentClick}
       >
         <Paperclip className="w-5 h-5" />
@@ -60,18 +55,20 @@ export function InputContainer({
         rows={1}
       />
 
-      {/* Send Button - Only render when content or attachments exist */}
-      {shouldShowSendButton && (
-        <Button
-          type="button"
-          onClick={onSend}
-          disabled={!shouldShowSendButton}
-          className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200"
-          size="icon"
-        >
-          <ArrowUp className="w-4 h-4" />
-        </Button>
-      )}
+      {/* Send Button - Should be invisible when NO content AND no attachments */}
+      <Button
+        type="button"
+        onClick={onSend}
+        disabled={!hasContent && !hasAttachments}
+        className={`flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 ${
+          hasContent || hasAttachments 
+            ? 'opacity-100 scale-100' 
+            : 'opacity-0 scale-75 pointer-events-none'
+        }`}
+        size="icon"
+      >
+        <ArrowUp className="w-4 h-4" />
+      </Button>
     </div>
   );
 }
