@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -75,7 +74,7 @@ export function AuthScreen() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#eaeaea] via-white to-[#eaeaea] px-4 relative">
       <div aria-hidden="true" className="absolute inset-0 backdrop-blur-sm bg-[#338dda]"></div>
       <div className="relative w-full max-w-sm mx-auto flex flex-col items-center z-10 px-4 py-8 rounded-xl shadow-lg bg-white/80">
-        <img src="/lovable-uploads/e9f7f372-2dd2-45bb-aefd-a4504a9f0249.png" alt="The Tradesmen AI Logo" draggable={false} className="mb-6 object-contain drop-shadow" />
+        <img src="/lovable-uploads/e9f7f372-2dd2-45bb-aefd-a4504a9f0249.png" alt="The Tradesmen AI Logo" draggable={false} className="mb-6 object-contain drop-shadow w-24 h-24" />
         <div className="text-center mb-4 font-bold text-xl text-[#3b9fe6] tracking-tight">theTradesmen.ai</div>
         <form className="w-full flex flex-col gap-4" onSubmit={handleSubmit} aria-labelledby="login-title">
           <div id="login-title" className="text-center font-semibold text-[#333333] text-lg mb-2">
