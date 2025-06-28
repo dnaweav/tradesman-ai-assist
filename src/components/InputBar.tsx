@@ -4,10 +4,19 @@ import { AttachmentPreview } from "./InputBar/AttachmentPreview";
 import { AttachmentSheet } from "./InputBar/AttachmentSheet";
 import { InputContainer } from "./InputBar/InputContainer";
 import { AttachmentFile, InputBarProps } from "./InputBar/types";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 
-export function InputBar({ value, onChange, onSend, onHeightChange, placeholder = "Describe the job, follow-up or task…" }: InputBarProps) {
+export function InputBar({ 
+  value, 
+  onChange, 
+  onSend, 
+  onHeightChange, 
+  placeholder = "Describe the job, follow-up or task…",
+  onMicClick 
+}: InputBarProps) {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const isKeyboardVisible = useKeyboardVisible();
   
   const [attachments, setAttachments] = React.useState<AttachmentFile[]>([]);
   const [showAttachmentSheet, setShowAttachmentSheet] = React.useState(false);
@@ -93,9 +102,6 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
 
   const hasContent = value.trim().length > 0;
 
-  // Debug logging to help troubleshoot
-  console.log('InputBar state:', { value, hasContent, attachmentsCount: attachments.length });
-
   return (
     <div ref={containerRef} className="w-full px-4 py-3 pb-6">
       <AttachmentPreview 
@@ -113,6 +119,8 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
         hasAttachments={attachments.length > 0}
         placeholder={placeholder}
         textareaRef={textareaRef}
+        isKeyboardVisible={isKeyboardVisible}
+        onMicClick={onMicClick}
       />
 
       <AttachmentSheet

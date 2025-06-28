@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, Paperclip } from "lucide-react";
+import { ArrowUp, Paperclip, Mic } from "lucide-react";
 
 interface InputContainerProps {
   value: string;
@@ -14,6 +14,8 @@ interface InputContainerProps {
   hasAttachments: boolean;
   placeholder: string;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
+  isKeyboardVisible?: boolean;
+  onMicClick?: () => void;
 }
 
 export function InputContainer({
@@ -25,7 +27,9 @@ export function InputContainer({
   hasContent,
   hasAttachments,
   placeholder,
-  textareaRef
+  textareaRef,
+  isKeyboardVisible = false,
+  onMicClick
 }: InputContainerProps) {
   return (
     <div className="relative flex flex-col gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/20 px-4 py-3 transition-all duration-200">
@@ -42,7 +46,7 @@ export function InputContainer({
 
       {/* Buttons Row */}
       <div className="flex items-center justify-between gap-3">
-        {/* Attachment Button - Always visible */}
+        {/* Left side - Attachment Button */}
         <Button
           type="button"
           variant="ghost"
@@ -53,18 +57,34 @@ export function InputContainer({
           <Paperclip className="w-5 h-5" />
         </Button>
 
-        {/* Send Button - Only visible when there's content or attachments */}
-        {(hasContent || hasAttachments) && (
-          <Button
-            type="button"
-            onClick={onSend}
-            disabled={!hasContent && !hasAttachments}
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200"
-            size="icon"
-          >
-            <ArrowUp className="w-4 h-4" />
-          </Button>
-        )}
+        {/* Right side - Mic and Send buttons */}
+        <div className="flex items-center gap-2">
+          {/* Small Mic Button - Only visible when keyboard is open */}
+          {isKeyboardVisible && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="flex-shrink-0 w-8 h-8 rounded-full bg-[#ffc000] hover:bg-[#ffb000] text-black transition-all duration-200"
+              onClick={onMicClick}
+            >
+              <Mic className="w-4 h-4" />
+            </Button>
+          )}
+
+          {/* Send Button - Only visible when there's content or attachments */}
+          {(hasContent || hasAttachments) && (
+            <Button
+              type="button"
+              onClick={onSend}
+              disabled={!hasContent && !hasAttachments}
+              className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200"
+              size="icon"
+            >
+              <ArrowUp className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

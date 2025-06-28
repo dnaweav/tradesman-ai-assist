@@ -117,6 +117,7 @@ export default function Index() {
           onChange={setInput}
           onSend={handleSend}
           onHeightChange={setFooterHeight}
+          onMicClick={handleMic}
         />
 
         {/* Bottom Navigation - Hidden when keyboard is visible */}

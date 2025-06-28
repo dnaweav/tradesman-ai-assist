@@ -12,4 +12,5 @@ export interface InputBarProps {
   onSend?: (message: string, files: File[]) => void;
   onHeightChange?: (height: number) => void;
   placeholder?: string;
+  onMicClick?: () => void;
 }
