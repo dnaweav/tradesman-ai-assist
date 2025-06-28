@@ -27,7 +27,8 @@ export default function ChatSession() {
     messages,
     loading,
     sendMessage,
-    isStreaming
+    isStreaming,
+    error
   } = useChatSession(sessionId || '');
 
   // Handle initial message from navigation state
@@ -69,6 +70,37 @@ export default function ChatSession() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-500">Loading chat...</div>
+      </div>
+    );
+  }
+
+  // Show error state instead of blank page
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <ChatHeader
+          title="Chat Error"
+          onBack={handleBack}
+          isAutoReadEnabled={isAutoReadEnabled}
+          onAutoReadToggle={setIsAutoReadEnabled}
+        />
+        
+        <div className="flex-1 flex items-center justify-center pt-16 pb-32">
+          <div className="text-center px-4">
+            <div className="text-red-500 text-lg font-semibold mb-2">
+              Unable to load chat
+            </div>
+            <div className="text-gray-600 mb-4">
+              {error}
+            </div>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

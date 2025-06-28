@@ -36,21 +36,24 @@ export function useChatSession(sessionId: string) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Helper function to convert database message to Message type
   const convertDatabaseMessage = (dbMessage: DatabaseMessage): Message => ({
     id: dbMessage.id,
-    sender: dbMessage.sender as 'user' | 'ai', // Type assertion since we control the values
+    sender: dbMessage.sender as 'user' | 'ai',
     content: dbMessage.content,
     created_at: dbMessage.created_at
   });
 
-  // Load chat session and messages
-  const loadChatSession = useCallback(async () => {
+  // Load chat session and messages with improved error handling
+  const loadChatSession = useCallback(async (retryCount = 0) => {
     if (!user || !sessionId) return;
 
     try {
-      // Load or create chat session
+      setError(null);
+      
+      // Try to load existing session first
       let { data: sessionData, error: sessionError } = await supabase
         .from('chat_sessions')
         .select('*')
@@ -59,32 +62,58 @@ export function useChatSession(sessionId: string) {
 
       if (sessionError && sessionError.code !== 'PGRST116') {
         console.error('Error loading chat session:', sessionError);
-        return;
+        throw sessionError;
       }
 
-      // If session doesn't exist, create it
+      // If session doesn't exist, create it with retry logic
       if (!sessionData) {
-        const { data: newSession, error: createError } = await supabase
-          .from('chat_sessions')
-          .insert({
-            id: sessionId,
-            user_id: user.id,
-            title: 'New Chat'
-          })
-          .select()
-          .single();
+        try {
+          const { data: newSession, error: createError } = await supabase
+            .from('chat_sessions')
+            .insert({
+              id: sessionId,
+              user_id: user.id,
+              title: 'New Chat'
+            })
+            .select()
+            .single();
 
-        if (createError) {
+          if (createError) {
+            // Handle duplicate key constraint violation
+            if (createError.code === '23505' && retryCount < 3) {
+              console.log('Duplicate session detected, attempting to fetch existing session...');
+              
+              // Wait a bit and try to fetch the existing session
+              await new Promise(resolve => setTimeout(resolve, 100));
+              
+              const { data: existingSession, error: fetchError } = await supabase
+                .from('chat_sessions')
+                .select('*')
+                .eq('id', sessionId)
+                .maybeSingle();
+
+              if (fetchError) {
+                throw fetchError;
+              }
+
+              if (existingSession) {
+                sessionData = existingSession;
+              } else {
+                // Retry with exponential backoff
+                const delay = Math.pow(2, retryCount) * 100;
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return loadChatSession(retryCount + 1);
+              }
+            } else {
+              throw createError;
+            }
+          } else {
+            sessionData = newSession;
+          }
+        } catch (createError) {
           console.error('Error creating chat session:', createError);
-          toast({
-            title: "Error",
-            description: "Failed to create chat session.",
-            variant: "destructive",
-          });
-          return;
+          throw createError;
         }
-
-        sessionData = newSession;
       }
 
       setSession(sessionData);
@@ -98,22 +127,28 @@ export function useChatSession(sessionId: string) {
 
       if (messagesError) {
         console.error('Error loading messages:', messagesError);
-        toast({
-          title: "Error",
-          description: "Failed to load messages.",
-          variant: "destructive",
-        });
+        // Don't throw here, just show empty messages
+        setMessages([]);
       } else {
-        // Convert database messages to Message type
         const convertedMessages = (messagesData || []).map(convertDatabaseMessage);
         setMessages(convertedMessages);
       }
     } catch (error) {
       console.error('Error in loadChatSession:', error);
+      setError('Failed to load chat session. Please try again.');
+      
+      // Create a fallback session to prevent blank page
+      setSession({
+        id: sessionId,
+        title: 'New Chat',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+      setMessages([]);
     } finally {
       setLoading(false);
     }
-  }, [user, sessionId, toast]);
+  }, [user, sessionId]);
 
   // Send message and get AI response
   const sendMessage = useCallback(async (content: string, files: File[] = []) => {
@@ -193,6 +228,7 @@ export function useChatSession(sessionId: string) {
     messages,
     loading,
     isStreaming,
+    error,
     sendMessage
   };
 }
