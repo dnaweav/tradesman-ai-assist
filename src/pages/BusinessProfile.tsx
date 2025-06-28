@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import { Camera, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -160,49 +161,52 @@ export default function BusinessProfile() {
 
         {/* Form Fields */}
         <div className="space-y-4">
-          {/* Business Name */}
-          <div className="bg-white rounded-2xl p-4 shadow-md">
-            <Label htmlFor="business_name" className="text-sm font-medium text-gray-700 mb-2 block">
-              Business Name
-            </Label>
-            <Input
-              id="business_name"
-              value={business.business_name || ''}
-              onChange={(e) => updateBusiness('business_name', e.target.value)}
-              disabled={!isAdmin}
-              className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
-              placeholder="Enter business name"
-            />
-          </div>
+          {/* Business Details Card - Combined Name, Address, and Postcode */}
+          <div className="bg-white rounded-2xl p-4 shadow-md space-y-4">
+            {/* Business Name */}
+            <div>
+              <Label htmlFor="business_name" className="text-sm font-medium text-gray-700 mb-2 block">
+                Business Name
+              </Label>
+              <Input
+                id="business_name"
+                value={business.business_name || ''}
+                onChange={(e) => updateBusiness('business_name', e.target.value)}
+                disabled={!isAdmin}
+                className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
+                placeholder="Enter business name"
+              />
+            </div>
 
-          {/* Address */}
-          <div className="bg-white rounded-2xl p-4 shadow-md">
-            <Label htmlFor="address" className="text-sm font-medium text-gray-700 mb-2 block">
-              Address
-            </Label>
-            <Textarea
-              id="address"
-              value={business.address || ''}
-              onChange={(e) => updateBusiness('address', e.target.value)}
-              disabled={!isAdmin}
-              className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out min-h-[80px]"
-              placeholder="Enter business address"
-            />
-          </div>
+            {/* Address */}
+            <div>
+              <Label htmlFor="address" className="text-sm font-medium text-gray-700 mb-2 block">
+                Address
+              </Label>
+              <Textarea
+                id="address"
+                value={business.address || ''}
+                onChange={(e) => updateBusiness('address', e.target.value)}
+                disabled={!isAdmin}
+                className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out min-h-[80px]"
+                placeholder="Enter business address"
+              />
+            </div>
 
-          {/* Postcode */}
-          <div className="bg-white rounded-2xl p-4 shadow-md">
-            <Label htmlFor="postcode" className="text-sm font-medium text-gray-700 mb-2 block">
-              Postcode
-            </Label>
-            <Input
-              id="postcode"
-              value={business.postcode || ''}
-              onChange={(e) => updateBusiness('postcode', e.target.value)}
-              disabled={!isAdmin}
-              className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
-              placeholder="Enter postcode"
-            />
+            {/* Postcode */}
+            <div>
+              <Label htmlFor="postcode" className="text-sm font-medium text-gray-700 mb-2 block">
+                Postcode
+              </Label>
+              <Input
+                id="postcode"
+                value={business.postcode || ''}
+                onChange={(e) => updateBusiness('postcode', e.target.value)}
+                disabled={!isAdmin}
+                className="rounded-xl shadow-md px-4 py-2 text-sm transition-all ease-in-out"
+                placeholder="Enter postcode"
+              />
+            </div>
           </div>
 
           {/* Email */}
