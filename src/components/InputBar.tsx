@@ -30,13 +30,12 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   const [attachments, setAttachments] = React.useState<AttachmentFile[]>([]);
   const [showAttachmentSheet, setShowAttachmentSheet] = React.useState(false);
 
-  // Calculate and emit total footer height
+  // Calculate and emit total footer height including bottom navigation
   const updateFooterHeight = React.useCallback(() => {
     if (containerRef.current && onHeightChange) {
       const containerHeight = containerRef.current.offsetHeight;
-      const micOverlap = 24; // Mic button overlap
       const navHeight = 60; // Bottom navigation height
-      const totalHeight = containerHeight + micOverlap + navHeight;
+      const totalHeight = containerHeight + navHeight;
       onHeightChange(totalHeight);
     }
   }, [onHeightChange]);
@@ -45,24 +44,17 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   const adjustTextareaHeight = React.useCallback(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      // Reset height to get accurate scrollHeight
       textarea.style.height = '48px';
-      
-      // Calculate new height based on content
       const newHeight = Math.min(Math.max(textarea.scrollHeight, 48), 160);
       textarea.style.height = `${newHeight}px`;
-      
-      // Update footer height after textarea resize
       setTimeout(updateFooterHeight, 0);
     }
   }, [updateFooterHeight]);
 
-  // Update height when content changes
   React.useEffect(() => {
     adjustTextareaHeight();
   }, [value, attachments, adjustTextareaHeight]);
 
-  // Initial height calculation
   React.useEffect(() => {
     const timer = setTimeout(updateFooterHeight, 100);
     return () => clearTimeout(timer);
@@ -74,7 +66,6 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
     const files = attachments.map(att => att.file);
     onSend?.(value, files);
     
-    // Clear input and attachments
     onChange('');
     setAttachments([]);
   };
@@ -121,7 +112,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
   const hasContent = value.trim().length > 0;
 
   return (
-    <div ref={containerRef} className="w-full px-4 py-3">
+    <div ref={containerRef} className="w-full px-4 py-3 pb-6">
       {/* File Previews */}
       {attachments.length > 0 && (
         <div className="mb-3 flex flex-wrap gap-2">

@@ -18,7 +18,7 @@ export function AppBottomTabs({
   onTabChange: (tab: string) => void;
 }) {
   return (
-    <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md bg-white/10 backdrop-blur-md border border-white/20 shadow-xl rounded-full px-4 py-2 flex justify-between items-center z-30">
+    <nav className="w-full bg-white/10 backdrop-blur-md border-t border-white/20 px-4 py-2 flex justify-between items-center z-10">
       <div className="flex flex-1 justify-around">
         {tabs.slice(0, 2).map((tab) => {
           const isActive = activeTab === tab.key;

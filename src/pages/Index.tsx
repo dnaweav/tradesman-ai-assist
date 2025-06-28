@@ -14,7 +14,7 @@ export default function Index() {
   const [micActive, setMicActive] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState("home");
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const [footerHeight, setFooterHeight] = React.useState(140); // Reduced initial height
+  const [footerHeight, setFooterHeight] = React.useState(140);
 
   function handleMic() {
     setMicActive(true);
@@ -36,14 +36,12 @@ export default function Index() {
     <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col overflow-hidden">
       {/* Fixed Header */}
       <header className="fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
-        {/* Avatar on Left */}
         <img 
           src={AVATAR_SRC} 
           className="w-10 h-10 rounded-full object-cover border-2 border-white/30 shadow" 
           alt="User avatar" 
         />
         
-        {/* Hamburger Menu on Right */}
         <button 
           aria-label="Open menu" 
           onClick={() => setMenuOpen(true)} 
@@ -64,7 +62,6 @@ export default function Index() {
         className="flex flex-col items-center justify-center flex-grow pt-16 px-4 transition-all duration-200 ease-in-out"
         style={{ paddingBottom: `${footerHeight}px` }}
       >
-        {/* Brand Logo */}
         <img 
           alt="theTradesmen.ai logo" 
           src="/lovable-uploads/1469542c-df73-456d-a0b0-baa6fdac06ca.png" 
@@ -78,21 +75,22 @@ export default function Index() {
         <PromptPills onPrompt={handlePrompt} />
       </div>
 
-      {/* Footer Container - Sticky positioning with all footer elements */}
-      <div className="sticky bottom-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-lg">
-        {/* Mic Button - Positioned within footer container */}
-        <button 
-          className="absolute left-1/2 transform -translate-x-1/2 -top-6 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-60 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
-          style={{
-            boxShadow: "0 8px 32px #ffc00040"
-          }} 
-          aria-label="Voice input" 
-          onClick={handleMic} 
-          type="button"
-        >
-          <Mic className="w-5 h-5 text-black" strokeWidth={2} />
-        </button>
+      {/* Microphone Button - Fixed positioning above everything */}
+      <button 
+        className="fixed left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-70 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
+        style={{
+          bottom: 'calc(theme(spacing.20) + 4rem)',
+          boxShadow: "0 8px 32px #ffc00040"
+        }} 
+        aria-label="Voice input" 
+        onClick={handleMic} 
+        type="button"
+      >
+        <Mic className="w-5 h-5 text-black" strokeWidth={2} />
+      </button>
 
+      {/* Footer Container - Sticky positioning with input and nav */}
+      <div className="sticky bottom-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-lg">
         {/* Input Bar */}
         <InputBar 
           value={input} 
