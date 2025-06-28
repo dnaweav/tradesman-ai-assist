@@ -36,6 +36,10 @@ export default function BusinessProfile() {
     // Add other navigation logic here as needed
   };
 
+  const handleBackClick = () => {
+    navigate('/');
+  };
+
   const handleLogoClick = () => {
     if (isAdmin && fileInputRef.current) {
       fileInputRef.current.click();
@@ -75,7 +79,7 @@ export default function BusinessProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#eaeaea] via-white to-[#eaeaea]">
-        <TopNav />
+        <TopNav showBackButton={true} onBackClick={handleBackClick} />
         <div className="flex items-center justify-center pt-20">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
         </div>
@@ -86,7 +90,7 @@ export default function BusinessProfile() {
   if (!business) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#eaeaea] via-white to-[#eaeaea]">
-        <TopNav />
+        <TopNav showBackButton={true} onBackClick={handleBackClick} />
         <div className="flex items-center justify-center pt-20">
           <div className="text-center">
             <Building2 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -100,7 +104,7 @@ export default function BusinessProfile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#eaeaea] via-white to-[#eaeaea]">
-      <TopNav />
+      <TopNav showBackButton={true} onBackClick={handleBackClick} />
       
       <div className="pt-20 pb-24 px-4 max-w-lg mx-auto">
         {/* Header */}
