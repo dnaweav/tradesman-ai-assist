@@ -60,7 +60,7 @@ export default function Index() {
       {/* Main Content - Centered vertically with proper spacing */}
       <div 
         className="flex flex-col items-center justify-center flex-grow pt-16 px-4 transition-all duration-200 ease-in-out"
-        style=20px` }}
+        style={{ paddingBottom: `${footerHeight}px` }}
       >
         <img 
           alt="theTradesmen.ai logo" 
