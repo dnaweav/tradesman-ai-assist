@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import {
   User,
@@ -13,6 +12,8 @@ import {
 import { SheetContent } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export function HamburgerMenu({ onClose }: { onClose: () => void }) {
   const [darkMode, setDarkMode] = React.useState(() =>
@@ -20,6 +21,7 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
       ? true
       : false
   );
+  const { toast } = useToast();
   
   React.useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -27,9 +29,34 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
   }, [darkMode]);
 
   const handleLogout = async () => {
-    // TODO: Implement supabase.auth.signOut() and redirect to login
-    console.log("Logout functionality to be implemented");
-    onClose();
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to log out. Please try again.",
+          variant: "destructive",
+        });
+        console.error("Logout error:", error);
+      } else {
+        toast({
+          title: "Success",
+          description: "You have been logged out successfully.",
+        });
+        // Close the menu
+        onClose();
+        // Optionally redirect to login page or refresh
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Unexpected logout error:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred during logout.",
+        variant: "destructive",
+      });
+    }
   };
 
   const accountItems = [
