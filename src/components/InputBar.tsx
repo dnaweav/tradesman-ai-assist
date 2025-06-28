@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -110,6 +111,9 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
 
   const hasContent = value.trim().length > 0;
 
+  // Debug logging to help troubleshoot
+  console.log('InputBar state:', { value, hasContent, attachmentsCount: attachments.length });
+
   return (
     <div ref={containerRef} className="w-full px-4 py-3 pb-6">
       {/* File Previews */}
@@ -150,13 +154,13 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
 
       {/* Input Container */}
       <div className="relative flex items-end gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/20 px-4 py-2 transition-all duration-200">
-        {/* Attachment Button */}
+        {/* Attachment Button - FIXED: Should be visible when NO content */}
         <Button
           type="button"
           variant="ghost"
           size="icon"
           className={`flex-shrink-0 w-8 h-8 rounded-full bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200 transition-all duration-200 ${
-            hasContent 
+            !hasContent && attachments.length === 0
               ? 'opacity-100 scale-100' 
               : 'opacity-0 scale-75 pointer-events-none'
           }`}
@@ -176,7 +180,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
           rows={1}
         />
 
-        {/* Send Button */}
+        {/* Send Button - Should be invisible when NO content AND no attachments */}
         <Button
           type="button"
           onClick={handleSend}
