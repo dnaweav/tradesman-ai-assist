@@ -122,14 +122,14 @@ export function HamburgerMenu({
             </div>
             <Switch checked={darkMode} onCheckedChange={setDarkMode} className="ml-2" />
           </div>
+        </div>
 
-          {/* Logout Section */}
-          <div className="mt-6 border-t border-border pt-4">
-            <button onClick={handleLogout} className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90" type="button">
-              <LogOut className="w-6 h-6" />
-              Log out
-            </button>
-          </div>
+        {/* Logout Section - Fixed to bottom */}
+        <div className="px-4 pb-6 border-t border-border pt-4">
+          <button onClick={handleLogout} className="flex items-center gap-4 w-full text-lg font-medium py-3 px-3 transition-all duration-150 ease-in-out rounded-lg hover:bg-[#f4f6fa] dark:hover:bg-[#2a2e37] text-[#333] dark:text-white/90" type="button">
+            <LogOut className="w-6 h-6" />
+            Log out
+          </button>
         </div>
       </div>
     </SheetContent>;
