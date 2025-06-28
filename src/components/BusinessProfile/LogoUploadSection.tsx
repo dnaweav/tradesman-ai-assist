@@ -1,6 +1,6 @@
 
 import React, { useRef } from 'react';
-import { Camera } from 'lucide-react';
+import { Camera, Edit, Trash2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
@@ -51,36 +51,65 @@ export function LogoUploadSection({ logoUrl, isAdmin, onLogoUpload, onLogoUpdate
     }
   };
 
+  const handleDeleteLogo = () => {
+    if (isAdmin && logoUrl) {
+      onLogoUpdate('');
+      toast({
+        title: "Success",
+        description: "Logo removed successfully.",
+      });
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl p-4 shadow-md mb-4">
       <div className="text-center">
         <Label className="text-sm font-medium text-gray-700 mb-2 block">
           Business Logo
         </Label>
-        <div
-          className={`relative mx-auto w-24 h-24 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden ${
-            isAdmin ? 'cursor-pointer hover:border-blue-400 transition-all ease-in-out' : 'cursor-not-allowed opacity-60'
-          }`}
-          onClick={handleLogoClick}
-        >
-          {logoUrl ? (
+        
+        {logoUrl ? (
+          // Display uploaded logo with action buttons
+          <div className="relative mx-auto w-32 h-32 rounded-2xl overflow-hidden">
             <img
               src={logoUrl}
               alt="Business Logo"
-              className="w-full h-full object-cover rounded-xl"
+              className="w-full h-full object-cover"
             />
-          ) : (
+            {isAdmin && (
+              <div className="absolute top-2 right-2 flex gap-2">
+                <button
+                  onClick={handleLogoClick}
+                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-lg transition-colors"
+                  title="Change logo"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleDeleteLogo}
+                  className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-colors"
+                  title="Delete logo"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          // Upload placeholder
+          <div
+            className={`relative mx-auto w-32 h-32 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center ${
+              isAdmin ? 'cursor-pointer hover:border-blue-400 transition-colors' : 'cursor-not-allowed opacity-60'
+            }`}
+            onClick={handleLogoClick}
+          >
             <div className="text-center">
-              <Camera className="w-8 h-8 text-gray-400 mx-auto mb-1" />
+              <Camera className="w-8 h-8 text-gray-400 mx-auto mb-2" />
               <span className="text-xs text-gray-500">Add Logo</span>
             </div>
-          )}
-          {isAdmin && (
-            <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all ease-in-out rounded-xl flex items-center justify-center">
-              <Camera className="w-6 h-6 text-white opacity-0 hover:opacity-100 transition-all ease-in-out" />
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+        
         <input
           ref={fileInputRef}
           type="file"
