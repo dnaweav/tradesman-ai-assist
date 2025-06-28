@@ -21,8 +21,8 @@ export function AppBottomTabs({
 }) {
   return (
     <nav className={cn(
-      "w-full bg-white/10 backdrop-blur-md border-t border-white/20 px-4 py-2 flex justify-between items-center z-10 transition-transform duration-300 ease-in-out",
-      isKeyboardVisible && "transform translate-y-full"
+      "w-full bg-white/10 backdrop-blur-md border-t border-white/20 px-4 py-2 flex justify-between items-center z-10 transition-all duration-300 ease-in-out",
+      isKeyboardVisible ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
     )}>
       <div className="flex flex-1 justify-around">
         {tabs.slice(0, 2).map((tab) => {

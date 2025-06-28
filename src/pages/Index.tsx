@@ -81,8 +81,8 @@ export default function Index() {
       {/* Microphone Button - Hidden when keyboard is visible */}
       <button 
         className={cn(
-          "absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] hover:scale-105 transition-all duration-300 ease-in-out active:scale-95",
-          isKeyboardVisible ? "opacity-0 pointer-events-none" : "opacity-100"
+          "absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] transition-all duration-300 ease-in-out active:scale-95",
+          isKeyboardVisible ? "opacity-0 pointer-events-none translate-y-8" : "opacity-100 translate-y-0 hover:scale-105"
         )}
         style={{
           bottom: "50px",
