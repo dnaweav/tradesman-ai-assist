@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { Camera, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { TopNav } from '@/components/TopNav';
 import { useBusinessProfile } from '@/hooks/useBusinessProfile';
 import { useToast } from '@/hooks/use-toast';
-import { DevSetup } from '@/components/DevSetup';
 
 export default function BusinessProfile() {
   const {
@@ -82,7 +82,6 @@ export default function BusinessProfile() {
             <p className="text-sm text-gray-500">Please contact support to set up your business profile.</p>
           </div>
         </div>
-        <DevSetup />
       </div>
     );
   }
@@ -267,9 +266,6 @@ export default function BusinessProfile() {
           </div>
         )}
       </div>
-
-      {/* Add DevSetup component for testing */}
-      <DevSetup />
     </div>
   );
 }
