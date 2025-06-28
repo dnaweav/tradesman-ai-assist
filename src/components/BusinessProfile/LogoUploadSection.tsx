@@ -71,7 +71,7 @@ export function LogoUploadSection({ logoUrl, isAdmin, onLogoUpload, onLogoUpdate
         
         {logoUrl ? (
           // Display uploaded logo with action buttons
-          <div className="relative mx-auto w-32 rounded-2xl overflow-hidden bg-gray-50">
+          <div className="relative mx-auto w-24 rounded-2xl overflow-hidden bg-gray-50">
             <AspectRatio ratio={1} className="bg-gray-50">
               <img
                 src={logoUrl}
@@ -101,7 +101,7 @@ export function LogoUploadSection({ logoUrl, isAdmin, onLogoUpload, onLogoUpdate
         ) : (
           // Upload placeholder
           <div
-            className={`relative mx-auto w-32 h-32 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center ${
+            className={`relative mx-auto w-24 h-24 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center ${
               isAdmin ? 'cursor-pointer hover:border-blue-400 transition-colors' : 'cursor-not-allowed opacity-60'
             }`}
             onClick={handleLogoClick}
