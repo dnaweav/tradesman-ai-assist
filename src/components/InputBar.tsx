@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -156,7 +155,7 @@ export function InputBar({ value, onChange, onSend, onHeightChange, placeholder 
           type="button"
           variant="ghost"
           size="icon"
-          className="flex-shrink-0 w-8 h-8 text-gray-600 dark:text-gray-400 hover:bg-white/20 dark:hover:bg-gray-700/20"
+          className="flex-shrink-0 w-8 h-8 rounded-full bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200"
           onClick={() => setShowAttachmentSheet(true)}
         >
           <Paperclip className="w-5 h-5" />
