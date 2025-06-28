@@ -14,7 +14,7 @@ export default function Index() {
   const [micActive, setMicActive] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState("home");
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const [totalFooterHeight, setTotalFooterHeight] = React.useState(140); // Base height for input + mic + nav
+  const [footerHeight, setFooterHeight] = React.useState(140); // Total footer height
 
   function handleMic() {
     setMicActive(true);
@@ -32,16 +32,12 @@ export default function Index() {
     // TODO: Implement message sending logic
   }
 
-  function handleFooterHeightChange(inputHeight: number) {
-    // Calculate total footer height: input height + mic button space + nav bar
-    const micSpace = 28; // Mic button extends above input
-    const navHeight = 80; // Bottom navigation height
-    const totalHeight = inputHeight + micSpace + navHeight;
-    setTotalFooterHeight(totalHeight);
+  function handleFooterHeightChange(height: number) {
+    setFooterHeight(height);
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] overflow-hidden">
+    <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9]">
       {/* Fixed Header */}
       <header className="flex-shrink-0 px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
         {/* Avatar on Left */}
@@ -70,7 +66,7 @@ export default function Index() {
       {/* Main Content - Flexible with dynamic padding */}
       <div 
         className="flex-grow flex flex-col items-center justify-center px-4 transition-all duration-200 ease-in-out"
-        style={{ paddingBottom: `${totalFooterHeight}px` }}
+        style={{ paddingBottom: `${footerHeight}px` }}
       >
         {/* Brand Logo */}
         <img 
@@ -90,7 +86,20 @@ export default function Index() {
       </div>
 
       {/* Footer Section - Sticky at bottom */}
-      <div className="flex-shrink-0 sticky bottom-0 w-full bg-blue-100/70 backdrop-blur-md z-40 shadow-md shadow-blue-300/40">
+      <div className="sticky bottom-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-md">
+        {/* Floating Mic Button - positioned within footer */}
+        <button 
+          className="absolute left-1/2 bottom-[calc(100%-24px)] translate-x-[-50%] w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center hover:scale-105 transition-all duration-150 ease-in-out active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 z-60" 
+          style={{
+            boxShadow: "0 8px 32px #ffc00040"
+          }} 
+          aria-label="Voice input" 
+          onClick={handleMic} 
+          type="button"
+        >
+          <Mic className="w-6 h-6 text-black" strokeWidth={2} />
+        </button>
+
         {/* Input Bar */}
         <InputBar 
           value={input} 
@@ -99,24 +108,8 @@ export default function Index() {
           onHeightChange={handleFooterHeightChange}
         />
 
-        {/* Footer Content - Higher z-index */}
-        <div className="relative z-50">
-          {/* Floating Mic Button */}
-          <button 
-            className="absolute -top-7 left-1/2 transform -translate-x-1/2 w-14 h-14 rounded-full border-4 border-white bg-[#ffc000] shadow-xl flex items-center justify-center hover:scale-105 transition-all duration-150 ease-in-out active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300" 
-            style={{
-              boxShadow: "0 8px 32px #ffc00040"
-            }} 
-            aria-label="Voice input" 
-            onClick={handleMic} 
-            type="button"
-          >
-            <Mic className="w-6 h-6 text-black" strokeWidth={2} />
-          </button>
-
-          {/* Bottom Navigation */}
-          <AppBottomTabs activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
+        {/* Bottom Navigation */}
+        <AppBottomTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>
   );
