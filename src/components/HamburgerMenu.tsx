@@ -46,7 +46,7 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
   return (
     <SheetContent 
       side="right" 
-      className="w-80 bg-white/90 backdrop-blur-md border-l border-white/20 shadow-lg z-50 dark:bg-[#20232a]/90"
+      className="w-80 bg-white/90 backdrop-blur-md border-l border-white/20 shadow-lg z-[150] dark:bg-[#20232a]/90"
     >
       <div className="flex flex-col h-full">
         {/* Menu Content */}
