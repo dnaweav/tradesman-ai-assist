@@ -18,6 +18,16 @@ interface Message {
   created_at: string;
 }
 
+// Database message type (matches what comes from Supabase)
+interface DatabaseMessage {
+  id: string;
+  chat_session_id: string;
+  sender: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export function useChatSession(sessionId: string) {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -26,6 +36,14 @@ export function useChatSession(sessionId: string) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [isStreaming, setIsStreaming] = useState(false);
+
+  // Helper function to convert database message to Message type
+  const convertDatabaseMessage = (dbMessage: DatabaseMessage): Message => ({
+    id: dbMessage.id,
+    sender: dbMessage.sender as 'user' | 'ai', // Type assertion since we control the values
+    content: dbMessage.content,
+    created_at: dbMessage.created_at
+  });
 
   // Load chat session and messages
   const loadChatSession = useCallback(async () => {
@@ -86,7 +104,9 @@ export function useChatSession(sessionId: string) {
           variant: "destructive",
         });
       } else {
-        setMessages(messagesData || []);
+        // Convert database messages to Message type
+        const convertedMessages = (messagesData || []).map(convertDatabaseMessage);
+        setMessages(convertedMessages);
       }
     } catch (error) {
       console.error('Error in loadChatSession:', error);
@@ -122,7 +142,8 @@ export function useChatSession(sessionId: string) {
       }
 
       // Add user message to local state
-      setMessages(prev => [...prev, userMessage]);
+      const convertedUserMessage = convertDatabaseMessage(userMessage as DatabaseMessage);
+      setMessages(prev => [...prev, convertedUserMessage]);
 
       // Start streaming AI response
       setIsStreaming(true);
@@ -145,7 +166,8 @@ export function useChatSession(sessionId: string) {
         if (aiError) {
           console.error('Error saving AI message:', aiError);
         } else {
-          setMessages(prev => [...prev, aiMessage]);
+          const convertedAiMessage = convertDatabaseMessage(aiMessage as DatabaseMessage);
+          setMessages(prev => [...prev, convertedAiMessage]);
         }
         
         setIsStreaming(false);
