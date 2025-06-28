@@ -75,11 +75,11 @@ export default function Index() {
         <PromptPills onPrompt={handlePrompt} />
       </div>
 
-      {/* Microphone Button - Fixed positioning above everything */}
+      {/* Microphone Button - Floating over footer intersection */}
       <button 
-        className="fixed left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-70 hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
+        className="fixed left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] hover:scale-105 transition-all duration-150 ease-in-out active:scale-95" 
         style={{
-          bottom: 'calc(theme(spacing.20) + 4rem)',
+          bottom: `${footerHeight - 24}px`,
           boxShadow: "0 8px 32px #ffc00040"
         }} 
         aria-label="Voice input" 
