@@ -6,6 +6,9 @@ import { Sheet } from "@/components/ui/sheet";
 import { HamburgerMenu } from "@/components/HamburgerMenu";
 import { InputBar } from "@/components/InputBar";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import { Menu, Mic } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +20,44 @@ export default function Index() {
   const [activeTab, setActiveTab] = React.useState("home");
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [footerHeight, setFooterHeight] = React.useState(140);
+  const [profilePhotoUrl, setProfilePhotoUrl] = React.useState<string | null>(null);
   const isKeyboardVisible = useKeyboardVisible();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Load user's profile photo
+  React.useEffect(() => {
+    if (user) {
+      loadUserProfilePhoto();
+    }
+  }, [user]);
+
+  const loadUserProfilePhoto = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('profile_photo_url')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error loading user profile photo:', error);
+        return;
+      }
+
+      if (data?.profile_photo_url) {
+        setProfilePhotoUrl(data.profile_photo_url);
+      }
+    } catch (error) {
+      console.error('Error loading user profile photo:', error);
+    }
+  };
+
+  const handleAvatarClick = () => {
+    navigate('/user-profile');
+  };
 
   function handleMic() {
     setMicActive(true);
@@ -39,11 +79,17 @@ export default function Index() {
     <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col overflow-hidden relative">
       {/* Fixed Header */}
       <header className="fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
-        <img 
-          src={AVATAR_SRC} 
-          className="w-10 h-10 rounded-full object-cover border-2 border-white/30 shadow" 
-          alt="User avatar" 
-        />
+        <button
+          onClick={handleAvatarClick}
+          className="transition-transform active:scale-95"
+          aria-label="Go to user profile"
+        >
+          <img 
+            src={profilePhotoUrl || AVATAR_SRC} 
+            className="w-10 h-10 rounded-full object-cover border-2 border-white/30 shadow hover:border-white/50 transition-colors" 
+            alt="User avatar" 
+          />
+        </button>
         
         <button 
           aria-label="Open menu" 
