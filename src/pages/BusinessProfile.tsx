@@ -90,7 +90,7 @@ export default function BusinessProfile() {
     <div className="min-h-screen bg-gradient-to-br from-[#eaeaea] via-white to-[#eaeaea]">
       <TopNav />
       
-      <div className="pt-16 pb-20 px-4 max-w-lg mx-auto">
+      <div className="pt-20 pb-20 px-4 max-w-lg mx-auto">
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Business Profile</h1>
