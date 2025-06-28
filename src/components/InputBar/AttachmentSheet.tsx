@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Camera, Image, File } from "lucide-react";
@@ -17,7 +16,7 @@ export function AttachmentSheet({ open, onOpenChange, onFileSelect }: Attachment
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="rounded-t-3xl">
+        <SheetContent side="bottom" className="rounded-t-3xl z-[150]">
           <SheetHeader>
             <SheetTitle>Add Attachment</SheetTitle>
           </SheetHeader>
