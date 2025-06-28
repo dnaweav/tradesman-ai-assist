@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { ChatHeader } from "@/components/Chat/ChatHeader";
 import { MessageThread } from "@/components/Chat/MessageThread";
 import { InputBar } from "@/components/InputBar";
@@ -13,12 +13,14 @@ import { Mic } from "lucide-react";
 export default function ChatSession() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const isKeyboardVisible = useKeyboardVisible();
   
   const [input, setInput] = React.useState("");
   const [micActive, setMicActive] = React.useState(false);
   const [isAutoReadEnabled, setIsAutoReadEnabled] = React.useState(false);
+  const [initialMessageSent, setInitialMessageSent] = React.useState(false);
   
   const {
     session,
@@ -27,6 +29,19 @@ export default function ChatSession() {
     sendMessage,
     isStreaming
   } = useChatSession(sessionId || '');
+
+  // Handle initial message from navigation state
+  React.useEffect(() => {
+    const state = location.state as { initialMessage?: string; initialFiles?: File[] } | null;
+    
+    if (state?.initialMessage && !initialMessageSent && !loading && session) {
+      sendMessage(state.initialMessage, state.initialFiles || []);
+      setInitialMessageSent(true);
+      
+      // Clear the navigation state to prevent re-sending on refresh
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.state, initialMessageSent, loading, session, sendMessage, navigate, location.pathname]);
 
   const handleSend = async (message: string, files: File[]) => {
     if (!message.trim() && files.length === 0) return;

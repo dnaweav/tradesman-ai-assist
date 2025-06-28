@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { PromptPills } from "@/components/PromptPills";
 import { AppBottomTabs } from "@/components/AppBottomTabs";
@@ -76,6 +75,9 @@ export default function Index() {
     navigate(`/chat/${newSessionId}`, { 
       state: { initialMessage: message, initialFiles: files }
     });
+    
+    // Clear the input field after navigation
+    setInput('');
   }
 
   return (
