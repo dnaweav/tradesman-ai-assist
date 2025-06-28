@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import {
   User,
@@ -14,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export function HamburgerMenu({ onClose }: { onClose: () => void }) {
   const [darkMode, setDarkMode] = React.useState(() =>
@@ -22,6 +24,7 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
       : false
   );
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   React.useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -46,8 +49,8 @@ export function HamburgerMenu({ onClose }: { onClose: () => void }) {
         });
         // Close the menu
         onClose();
-        // Optionally redirect to login page or refresh
-        window.location.reload();
+        // Navigate to auth page
+        navigate('/auth');
       }
     } catch (error) {
       console.error("Unexpected logout error:", error);
