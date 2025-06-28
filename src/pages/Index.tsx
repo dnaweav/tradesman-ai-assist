@@ -114,7 +114,7 @@ export default function Index() {
         <img 
           alt="theTradesmen.ai logo" 
           src="/lovable-uploads/1469542c-df73-456d-a0b0-baa6fdac06ca.png" 
-          className="w-48 h-48 mx-auto mb-6 object-scale-down" 
+          className="w-64 h-64 mx-auto mb-6 object-scale-down" 
         />
         
         <h1 className="text-2xl md:text-3xl font-semibold text-white text-center mb-8 animate-fade-in">
