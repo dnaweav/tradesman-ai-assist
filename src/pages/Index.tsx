@@ -19,6 +19,11 @@ export default function Index() {
   const [footerHeight, setFooterHeight] = React.useState(140);
   const isKeyboardVisible = useKeyboardVisible();
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('Index component - isKeyboardVisible changed:', isKeyboardVisible);
+  }, [isKeyboardVisible]);
+
   function handleMic() {
     setMicActive(true);
     setTimeout(() => setMicActive(false), 480);
@@ -37,6 +42,13 @@ export default function Index() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#3b9fe6] to-[#2a8dd9] flex flex-col overflow-hidden relative">
+      {/* Debug indicator - remove in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-20 right-4 z-[200] bg-red-500 text-white px-2 py-1 text-xs rounded">
+          Keyboard: {isKeyboardVisible ? 'VISIBLE' : 'HIDDEN'}
+        </div>
+      )}
+
       {/* Fixed Header */}
       <header className="fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-blue-500/80 backdrop-blur z-50">
         <img 
@@ -79,21 +91,23 @@ export default function Index() {
       </div>
 
       {/* Microphone Button - Hidden when keyboard is visible */}
-      <button 
+      <div
         className={cn(
-          "absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center z-[100] transition-all duration-300 ease-in-out active:scale-95",
-          isKeyboardVisible ? "opacity-0 pointer-events-none translate-y-8" : "opacity-100 translate-y-0 hover:scale-105"
+          "absolute left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-300 ease-in-out",
+          isKeyboardVisible ? "opacity-0 pointer-events-none scale-95 translate-y-4" : "opacity-100 scale-100 translate-y-0"
         )}
-        style={{
-          bottom: "50px",
-          boxShadow: "0 8px 32px #ffc00040"
-        }} 
-        aria-label="Voice input" 
-        onClick={handleMic} 
-        type="button"
+        style={{ bottom: "50px" }}
       >
-        <Mic className="w-5 h-5 text-black" strokeWidth={2} />
-      </button>
+        <button 
+          className="w-12 h-12 rounded-full border-3 border-white bg-[#ffc000] shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-150"
+          style={{ boxShadow: "0 8px 32px #ffc00040" }}
+          aria-label="Voice input" 
+          onClick={handleMic} 
+          type="button"
+        >
+          <Mic className="w-5 h-5 text-black" strokeWidth={2} />
+        </button>
+      </div>
 
       {/* Footer Container - Sticky positioning with input and nav */}
       <div className="sticky bottom-0 z-50 w-full backdrop-blur-md shadow-lg">
