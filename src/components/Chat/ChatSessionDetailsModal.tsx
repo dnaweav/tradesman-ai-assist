@@ -66,6 +66,8 @@ export function ChatSessionDetailsModal({
   currentVoiceEnabled = false,
   onSave
 }: ChatSessionDetailsModalProps) {
+  console.log('ChatSessionDetailsModal rendered:', { open, sessionId, currentTitle });
+  
   const { user } = useAuth();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -74,6 +76,7 @@ export function ChatSessionDetailsModal({
   const [showNewContact, setShowNewContact] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
 
   const { register, handleSubmit, setValue, watch, reset } = useForm<ChatSessionData>({
     defaultValues: {
@@ -89,9 +92,16 @@ export function ChatSessionDetailsModal({
 
   useEffect(() => {
     if (open && user) {
-      loadContacts();
-      loadTags();
-      loadSessionTags();
+      console.log('Loading modal data...');
+      setDataLoading(true);
+      Promise.all([
+        loadContacts(),
+        loadTags(), 
+        loadSessionTags()
+      ]).finally(() => {
+        setDataLoading(false);
+        console.log('Modal data loaded');
+      });
     }
   }, [open, user]);
 
@@ -225,14 +235,24 @@ export function ChatSessionDetailsModal({
     }
   };
 
+  if (!sessionId) {
+    console.error('No sessionId provided to modal');
+    return null;
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background">
         <DialogHeader>
-          <DialogTitle>Chat Session Settings</DialogTitle>
+          <DialogTitle className="text-foreground">Chat Session Settings</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {dataLoading ? (
+          <div className="flex items-center justify-center p-8">
+            <div className="text-muted-foreground">Loading...</div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Chat Title */}
           <Card>
             <CardHeader>
@@ -401,6 +421,7 @@ export function ChatSessionDetailsModal({
             </Button>
           </div>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   );
