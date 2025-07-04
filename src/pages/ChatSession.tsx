@@ -28,6 +28,7 @@ export default function ChatSession() {
   const [isAutoReadEnabled, setIsAutoReadEnabled] = React.useState(false);
   const [initialMessageSent, setInitialMessageSent] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [footerHeight, setFooterHeight] = React.useState(120); // Default height
   
   console.log('ChatSession state:', { sessionId, user: !!user, initialMessageSent });
 
@@ -215,7 +216,7 @@ export default function ChatSession() {
       </div>
 
       {/* Chat FAB */}
-      <ChatFAB onClick={() => setModalOpen(true)} />
+      <ChatFAB onClick={() => setModalOpen(true)} bottomOffset={footerHeight + 20} />
 
       {/* Chat Session Details Modal */}
       <ChatSessionDetailsModal
@@ -237,6 +238,7 @@ export default function ChatSession() {
           onChange={setInput}
           onSend={handleSend}
           onMicClick={handleMic}
+          onHeightChange={setFooterHeight}
           placeholder="Type your message..."
         />
       </div>
