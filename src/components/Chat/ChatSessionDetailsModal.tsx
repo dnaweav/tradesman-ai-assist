@@ -295,80 +295,36 @@ export function ChatSessionDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background border">
-        <DialogHeader>
-          <DialogTitle className="text-foreground">Chat Session Settings</DialogTitle>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white border-2 border-red-500 min-h-[400px]">
+        <DialogHeader className="bg-blue-100 p-4">
+          <DialogTitle className="text-black text-xl">Chat Session Settings (DEBUG MODE)</DialogTitle>
         </DialogHeader>
         
-        {/* Debug info - remove later */}
-        <div className="text-xs text-muted-foreground p-2 bg-muted/20 rounded">
-          Debug: sessionId={sessionId}, loading={dataLoading.toString()}, contacts={contacts.length}, tags={tags.length}
+        {/* Forced visible content for debugging */}
+        <div className="bg-yellow-100 text-black p-4 border-2 border-yellow-500">
+          <h2 className="text-lg font-bold">DEBUG: Modal Content Test</h2>
+          <p>SessionID: {sessionId}</p>
+          <p>Open: {open.toString()}</p>
+          <p>Loading: {dataLoading.toString()}</p>
+          <p>Contacts: {contacts.length}</p>
+          <p>Tags: {tags.length}</p>
         </div>
         
         {dataLoading ? (
-          <div className="flex items-center justify-center p-8">
-            <div className="text-muted-foreground">Loading...</div>
+          <div className="bg-green-100 text-black p-8 border-2 border-green-500">
+            <div className="text-xl font-bold">LOADING STATE - Should be visible</div>
           </div>
         ) : (
-          <div className="space-y-6">
-            {/* Simplified test content */}
-            <div className="border border-border rounded-lg p-4">
-              <h3 className="text-lg font-semibold mb-2">Basic Chat Info</h3>
-              <div className="space-y-2 text-sm">
-                <p><strong>Session ID:</strong> {sessionId}</p>
-                <p><strong>Current Title:</strong> {currentTitle || 'No title'}</p>
-                <p><strong>Chat Type:</strong> {currentChatType || 'No type'}</p>
-                <p><strong>Voice Enabled:</strong> {currentVoiceEnabled ? 'Yes' : 'No'}</p>
-              </div>
-            </div>
-
-            {/* Basic form - simplified */}
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <Label htmlFor="title">Chat Title</Label>
-                <Input
-                  id="title"
-                  placeholder="Enter chat title"
-                  {...register("title")}
-                  className="mt-1"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="chat_type">Chat Type</Label>
-                <Select onValueChange={(value) => setValue("chat_type", value)} value={watch("chat_type")}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CHAT_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="voice_enabled"
-                  checked={watchedVoiceEnabled}
-                  onCheckedChange={(checked) => setValue("voice_enabled", checked)}
-                />
-                <Label htmlFor="voice_enabled">Enable voice responses</Label>
-              </div>
-
-              {/* Actions */}
-              <div className="flex justify-end space-x-2 pt-4">
-                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={loading}>
-                  {loading ? "Saving..." : "Save Changes"}
-                </Button>
-              </div>
-            </form>
+          <div className="bg-purple-100 text-black p-6 border-2 border-purple-500">
+            <h3 className="text-xl font-bold mb-4">CONTENT LOADED - This should be visible!</h3>
+            <p>If you can see this, the modal is working.</p>
+            
+            <Button 
+              onClick={() => onOpenChange(false)}
+              className="mt-4 bg-red-500 text-white"
+            >
+              Close Modal (Test Button)
+            </Button>
           </div>
         )}
       </DialogContent>
