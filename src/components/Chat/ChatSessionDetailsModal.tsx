@@ -237,7 +237,23 @@ export function ChatSessionDetailsModal({
 
   if (!sessionId) {
     console.error('No sessionId provided to modal');
-    return null;
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-md bg-background">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">No Active Chat</DialogTitle>
+          </DialogHeader>
+          <div className="text-center p-6">
+            <p className="text-muted-foreground mb-4">
+              This feature is only available within an active chat session.
+            </p>
+            <Button onClick={() => onOpenChange(false)}>
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   return (
