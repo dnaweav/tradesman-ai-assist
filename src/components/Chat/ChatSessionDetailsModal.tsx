@@ -310,27 +310,35 @@ export function ChatSessionDetailsModal({
             <div className="text-muted-foreground">Loading...</div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Chat Title */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Chat Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="space-y-6">
+            {/* Simplified test content */}
+            <div className="border border-border rounded-lg p-4">
+              <h3 className="text-lg font-semibold mb-2">Basic Chat Info</h3>
+              <div className="space-y-2 text-sm">
+                <p><strong>Session ID:</strong> {sessionId}</p>
+                <p><strong>Current Title:</strong> {currentTitle || 'No title'}</p>
+                <p><strong>Chat Type:</strong> {currentChatType || 'No type'}</p>
+                <p><strong>Voice Enabled:</strong> {currentVoiceEnabled ? 'Yes' : 'No'}</p>
+              </div>
+            </div>
+
+            {/* Basic form - simplified */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <Label htmlFor="title">Chat Title</Label>
                 <Input
                   id="title"
-                  placeholder="e.g. En-suite Quote for Mr. Smith"
+                  placeholder="Enter chat title"
                   {...register("title")}
+                  className="mt-1"
                 />
               </div>
               
               <div>
                 <Label htmlFor="chat_type">Chat Type</Label>
                 <Select onValueChange={(value) => setValue("chat_type", value)} value={watch("chat_type")}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select chat type" />
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
                     {CHAT_TYPES.map((type) => (
@@ -341,70 +349,7 @@ export function ChatSessionDetailsModal({
                   </SelectContent>
                 </Select>
               </div>
-              
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Add notes or summary about this chat..."
-                  {...register("description")}
-                />
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Contact Assignment */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Contact</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="contact">Assign to Contact</Label>
-                <Select onValueChange={(value) => setValue("contact_id", value)} value={watch("contact_id") || ""}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select contact" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">No contact assigned</SelectItem>
-                    {contacts.map((contact) => (
-                      <SelectItem key={contact.id} value={contact.id}>
-                        {contact.name} {contact.email && `(${contact.email})`}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {showNewContact ? (
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Contact name"
-                    value={newContactName}
-                    onChange={(e) => setNewContactName(e.target.value)}
-                  />
-                  <Button type="button" onClick={createContact} size="sm">
-                    Add
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setShowNewContact(false)} size="sm">
-                    Cancel
-                  </Button>
-                </div>
-              ) : (
-                <Button type="button" variant="outline" onClick={() => setShowNewContact(true)} className="w-full">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add New Contact
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
               <div className="flex items-center space-x-2">
                 <Switch
                   id="voice_enabled"
@@ -413,72 +358,18 @@ export function ChatSessionDetailsModal({
                 />
                 <Label htmlFor="voice_enabled">Enable voice responses</Label>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* File Upload */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">File Attachments</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
-                <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                <Label htmlFor="files" className="cursor-pointer text-sm font-medium">
-                  Click to upload files or drag and drop
-                </Label>
-                <Input
-                  id="files"
-                  type="file"
-                  multiple
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-                {files.length > 0 && (
-                  <div className="mt-2 text-sm text-muted-foreground">
-                    {files.length} file(s) selected
-                  </div>
-                )}
+              {/* Actions */}
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? "Saving..." : "Save Changes"}
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Tags */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Tags</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    onClick={() => handleTagToggle(tag.id)}
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                      selectedTags.includes(tag.id)
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground hover:bg-muted/80"
-                    }`}
-                  >
-                    <Tag className="w-3 h-3 mr-1" />
-                    {tag.name}
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Actions */}
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Saving..." : "Save Changes"}
-            </Button>
+            </form>
           </div>
-        </form>
         )}
       </DialogContent>
     </Dialog>
