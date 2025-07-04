@@ -9,6 +9,10 @@ interface ChatSession {
   title: string;
   created_at: string;
   updated_at: string;
+  chat_type?: string;
+  contact_id?: string;
+  description?: string;
+  voice_enabled?: boolean;
 }
 
 interface Message {

@@ -4,12 +4,15 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { ChatHeader } from "@/components/Chat/ChatHeader";
 import { MessageThread } from "@/components/Chat/MessageThread";
 import { InputBar } from "@/components/InputBar";
+import { ChatFAB } from "@/components/Chat/ChatFAB";
+import { ChatSessionDetailsModal } from "@/components/Chat/ChatSessionDetailsModal";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useChatSession } from "@/hooks/useChatSession";
 import { useAuth } from "@/hooks/useAuth";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { cn } from "@/lib/utils";
 import { Mic } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function ChatSession() {
   console.log('ChatSession component rendering');
@@ -24,6 +27,7 @@ export default function ChatSession() {
   const [micActive, setMicActive] = React.useState(false);
   const [isAutoReadEnabled, setIsAutoReadEnabled] = React.useState(false);
   const [initialMessageSent, setInitialMessageSent] = React.useState(false);
+  const [modalOpen, setModalOpen] = React.useState(false);
   
   console.log('ChatSession state:', { sessionId, user: !!user, initialMessageSent });
 
@@ -80,6 +84,27 @@ export default function ChatSession() {
 
   const handleBack = () => {
     navigate('/');
+  };
+
+  const handleSaveSessionDetails = async (data: any) => {
+    if (!session) return;
+    
+    const { error } = await supabase
+      .from('chat_sessions')
+      .update({
+        title: data.title || 'New Chat',
+        chat_type: data.chat_type,
+        contact_id: data.contact_id,
+        description: data.description,
+        voice_enabled: data.voice_enabled
+      })
+      .eq('id', session.id);
+    
+    if (!error) {
+      // Update local auto-read state
+      setIsAutoReadEnabled(data.voice_enabled);
+      // You might want to refetch session data here
+    }
   };
 
   if (!user) {
@@ -188,6 +213,22 @@ export default function ChatSession() {
           <Mic className="w-5 h-5 text-black" strokeWidth={2} />
         </button>
       </div>
+
+      {/* Chat FAB */}
+      <ChatFAB onClick={() => setModalOpen(true)} />
+
+      {/* Chat Session Details Modal */}
+      <ChatSessionDetailsModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        sessionId={sessionId || ''}
+        currentTitle={session?.title}
+        currentChatType={session?.chat_type}
+        currentContactId={session?.contact_id}
+        currentDescription={session?.description}
+        currentVoiceEnabled={session?.voice_enabled || false}
+        onSave={handleSaveSessionDetails}
+      />
 
       {/* Fixed Input Bar */}
       <div className="fixed bottom-0 w-full z-50 backdrop-blur-md">

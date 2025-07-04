@@ -51,29 +51,136 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_files: {
+        Row: {
+          chat_session_id: string
+          created_at: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          file_type: string | null
+          id: string
+        }
+        Insert: {
+          chat_session_id: string
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+        }
+        Update: {
+          chat_session_id?: string
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_files_chat_session_id_fkey"
+            columns: ["chat_session_id"]
+            isOneToOne: false
+            referencedRelation: "chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_session_tags: {
+        Row: {
+          chat_session_id: string
+          id: string
+          tag_id: string
+        }
+        Insert: {
+          chat_session_id: string
+          id?: string
+          tag_id: string
+        }
+        Update: {
+          chat_session_id?: string
+          id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_session_tags_chat_session_id_fkey"
+            columns: ["chat_session_id"]
+            isOneToOne: false
+            referencedRelation: "chat_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_session_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_sessions: {
         Row: {
+          chat_type: string | null
           contact_id: string | null
           created_at: string
+          description: string | null
           id: string
           title: string
           updated_at: string
           user_id: string
+          voice_enabled: boolean | null
         }
         Insert: {
+          chat_type?: string | null
           contact_id?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           title?: string
           updated_at?: string
           user_id: string
+          voice_enabled?: boolean | null
         }
         Update: {
+          chat_type?: string | null
           contact_id?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           title?: string
           updated_at?: string
+          user_id?: string
+          voice_enabled?: boolean | null
+        }
+        Relationships: []
+      }
+      contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
           user_id?: string
         }
         Relationships: []
@@ -112,6 +219,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tags: {
+        Row: {
+          created_at: string
+          created_by_user_id: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
       user_profiles: {
         Row: {
