@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
-interface ChatSession {
+export interface ChatSession {
   id: string;
   title: string;
   created_at: string;
