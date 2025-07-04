@@ -66,7 +66,20 @@ export function ChatSessionDetailsModal({
   currentVoiceEnabled = false,
   onSave
 }: ChatSessionDetailsModalProps) {
-  console.log('ChatSessionDetailsModal rendered:', { open, sessionId, currentTitle });
+  console.log('ChatSessionDetailsModal rendered:', { 
+    open, 
+    sessionId, 
+    currentTitle,
+    currentChatType,
+    currentContactId,
+    currentDescription,
+    currentVoiceEnabled
+  });
+  
+  // Early validation logging
+  if (open && !sessionId) {
+    console.warn('Modal opened without sessionId!');
+  }
   
   const { user } = useAuth();
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -120,25 +133,47 @@ export function ChatSessionDetailsModal({
   const loadContacts = async () => {
     if (!user) return;
     
-    const { data } = await supabase
-      .from('contacts')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('name');
-    
-    if (data) setContacts(data);
+    try {
+      console.log('Loading contacts...');
+      const { data, error } = await supabase
+        .from('contacts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('name');
+      
+      if (error) {
+        console.error('Error loading contacts:', error);
+      } else {
+        console.log('Contacts loaded:', data?.length || 0);
+        setContacts(data || []);
+      }
+    } catch (error) {
+      console.error('Exception loading contacts:', error);
+      setContacts([]);
+    }
   };
 
   const loadTags = async () => {
     if (!user) return;
     
-    const { data } = await supabase
-      .from('tags')
-      .select('*')
-      .eq('created_by_user_id', user.id)
-      .order('name');
-    
-    if (data) setTags(data);
+    try {
+      console.log('Loading tags...');
+      const { data, error } = await supabase
+        .from('tags')
+        .select('*')
+        .eq('created_by_user_id', user.id)
+        .order('name');
+      
+      if (error) {
+        console.error('Error loading tags:', error);
+      } else {
+        console.log('Tags loaded:', data?.length || 0);
+        setTags(data || []);
+      }
+    } catch (error) {
+      console.error('Exception loading tags:', error);
+      setTags([]);
+    }
   };
 
   const loadSessionTags = async () => {
@@ -256,12 +291,19 @@ export function ChatSessionDetailsModal({
     );
   }
 
+  console.log('Rendering main modal content:', { sessionId, dataLoading, contacts: contacts.length, tags: tags.length });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background border">
         <DialogHeader>
           <DialogTitle className="text-foreground">Chat Session Settings</DialogTitle>
         </DialogHeader>
+        
+        {/* Debug info - remove later */}
+        <div className="text-xs text-muted-foreground p-2 bg-muted/20 rounded">
+          Debug: sessionId={sessionId}, loading={dataLoading.toString()}, contacts={contacts.length}, tags={tags.length}
+        </div>
         
         {dataLoading ? (
           <div className="flex items-center justify-center p-8">
