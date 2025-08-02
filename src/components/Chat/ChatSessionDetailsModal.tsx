@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { X, Plus, Upload, Tag } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Settings, FileText, Settings2, Mic, Tag, Info, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -45,14 +44,16 @@ interface Tag {
 }
 
 const CHAT_TYPES = [
-  "Quote",
-  "Job",
-  "Admin",
-  "Advice",
-  "Client Follow-Up",
-  "Support",
-  "Planning",
-  "Other"
+  { value: "general", label: "General Chat" },
+  { value: "work", label: "Work Discussion" },
+  { value: "personal", label: "Personal Chat" },
+  { value: "support", label: "Support Request" },
+  { value: "quote", label: "Quote Request" },
+  { value: "job", label: "Job Planning" },
+  { value: "admin", label: "Administrative" },
+  { value: "advice", label: "Advice & Consultation" },
+  { value: "follow-up", label: "Client Follow-Up" },
+  { value: "other", label: "Other" }
 ];
 
 export function ChatSessionDetailsModal({
@@ -66,34 +67,16 @@ export function ChatSessionDetailsModal({
   currentVoiceEnabled = false,
   onSave
 }: ChatSessionDetailsModalProps) {
-  console.log('ChatSessionDetailsModal rendered:', { 
-    open, 
-    sessionId, 
-    currentTitle,
-    currentChatType,
-    currentContactId,
-    currentDescription,
-    currentVoiceEnabled
-  });
-  
-  // Early validation logging
-  if (open && !sessionId) {
-    console.warn('Modal opened without sessionId!');
-  }
-  
   const { user } = useAuth();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [newContactName, setNewContactName] = useState("");
-  const [showNewContact, setShowNewContact] = useState(false);
-  const [files, setFiles] = useState<File[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [dataLoading, setDataLoading] = useState(false);
+  const [loadingSessionDetails, setLoadingSessionDetails] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, setValue, watch, reset } = useForm<ChatSessionData>({
     defaultValues: {
-      title: currentTitle,
+      title: currentTitle || "New Chat",
       chat_type: currentChatType,
       contact_id: currentContactId || null,
       description: currentDescription,
@@ -101,50 +84,44 @@ export function ChatSessionDetailsModal({
     }
   });
 
-  const watchedVoiceEnabled = watch("voice_enabled");
+  const isOpen = open && !!sessionId;
 
   useEffect(() => {
-    if (open && user) {
-      console.log('Loading modal data...');
-      setDataLoading(true);
+    if (isOpen && user) {
+      setLoadingSessionDetails(true);
       Promise.all([
         loadContacts(),
         loadTags(), 
         loadSessionTags()
       ]).finally(() => {
-        setDataLoading(false);
-        console.log('Modal data loaded');
+        setLoadingSessionDetails(false);
       });
     }
-  }, [open, user]);
+  }, [isOpen, user, sessionId]);
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       reset({
-        title: currentTitle,
+        title: currentTitle || "New Chat",
         chat_type: currentChatType,
         contact_id: currentContactId || null,
         description: currentDescription,
         voice_enabled: currentVoiceEnabled
       });
     }
-  }, [open, currentTitle, currentChatType, currentContactId, currentDescription, currentVoiceEnabled, reset]);
+  }, [isOpen, currentTitle, currentChatType, currentContactId, currentDescription, currentVoiceEnabled, reset]);
 
   const loadContacts = async () => {
     if (!user) return;
     
     try {
-      console.log('Loading contacts...');
       const { data, error } = await supabase
         .from('contacts')
         .select('*')
         .eq('user_id', user.id)
         .order('name');
       
-      if (error) {
-        console.error('Error loading contacts:', error);
-      } else {
-        console.log('Contacts loaded:', data?.length || 0);
+      if (!error) {
         setContacts(data || []);
       }
     } catch (error) {
@@ -157,17 +134,13 @@ export function ChatSessionDetailsModal({
     if (!user) return;
     
     try {
-      console.log('Loading tags...');
       const { data, error } = await supabase
         .from('tags')
         .select('*')
         .eq('created_by_user_id', user.id)
         .order('name');
       
-      if (error) {
-        console.error('Error loading tags:', error);
-      } else {
-        console.log('Tags loaded:', data?.length || 0);
+      if (!error) {
         setTags(data || []);
       }
     } catch (error) {
@@ -177,112 +150,78 @@ export function ChatSessionDetailsModal({
   };
 
   const loadSessionTags = async () => {
-    const { data } = await supabase
-      .from('chat_session_tags')
-      .select('tag_id')
-      .eq('chat_session_id', sessionId);
+    if (!sessionId) return;
     
-    if (data) {
-      setSelectedTags(data.map(item => item.tag_id));
-    }
-  };
-
-  const createContact = async () => {
-    if (!user || !newContactName.trim()) return;
-    
-    const { data, error } = await supabase
-      .from('contacts')
-      .insert({
-        user_id: user.id,
-        name: newContactName.trim()
-      })
-      .select()
-      .single();
-    
-    if (data && !error) {
-      setContacts(prev => [...prev, data]);
-      setValue("contact_id", data.id);
-      setNewContactName("");
-      setShowNewContact(false);
+    try {
+      const { data } = await supabase
+        .from('chat_session_tags')
+        .select('tag_id')
+        .eq('chat_session_id', sessionId);
+      
+      if (data) {
+        setSelectedTags(data.map(item => item.tag_id));
+      }
+    } catch (error) {
+      console.error('Exception loading session tags:', error);
     }
   };
 
   const handleTagToggle = async (tagId: string) => {
+    if (!sessionId) return;
+    
     const isSelected = selectedTags.includes(tagId);
     
-    if (isSelected) {
-      // Remove tag
-      await supabase
-        .from('chat_session_tags')
-        .delete()
-        .eq('chat_session_id', sessionId)
-        .eq('tag_id', tagId);
-      
-      setSelectedTags(prev => prev.filter(id => id !== tagId));
-    } else {
-      // Add tag
-      await supabase
-        .from('chat_session_tags')
-        .insert({
-          chat_session_id: sessionId,
-          tag_id: tagId
-        });
-      
-      setSelectedTags(prev => [...prev, tagId]);
+    try {
+      if (isSelected) {
+        await supabase
+          .from('chat_session_tags')
+          .delete()
+          .eq('chat_session_id', sessionId)
+          .eq('tag_id', tagId);
+        
+        setSelectedTags(prev => prev.filter(id => id !== tagId));
+      } else {
+        await supabase
+          .from('chat_session_tags')
+          .insert({
+            chat_session_id: sessionId,
+            tag_id: tagId
+          });
+        
+        setSelectedTags(prev => [...prev, tagId]);
+      }
+    } catch (error) {
+      console.error('Error toggling tag:', error);
     }
   };
 
   const onSubmit = async (data: ChatSessionData) => {
-    setLoading(true);
-    
-    // Handle file uploads
-    if (files.length > 0) {
-      for (const file of files) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${user?.id}/${sessionId}/${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('chat_files')
-          .upload(fileName, file);
-        
-        if (!uploadError) {
-          await supabase
-            .from('chat_files')
-            .insert({
-              chat_session_id: sessionId,
-              file_name: file.name,
-              file_path: fileName,
-              file_size: file.size,
-              file_type: file.type
-            });
-        }
-      }
-    }
-    
-    onSave(data);
-    setLoading(false);
-    onOpenChange(false);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFiles(Array.from(e.target.files));
+    setIsSubmitting(true);
+    try {
+      onSave(data);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error saving chat session:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (!sessionId) {
-    console.error('No sessionId provided to modal');
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md bg-background">
-          <DialogHeader>
-            <DialogTitle className="text-foreground">No Active Chat</DialogTitle>
-          </DialogHeader>
           <div className="text-center p-6">
-            <p className="text-muted-foreground mb-4">
+            <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
+              <X className="w-8 h-8 text-destructive" />
+            </div>
+            <DialogTitle className="text-lg font-semibold text-foreground mb-2">
+              No Active Chat
+            </DialogTitle>
+            <p className="text-muted-foreground mb-6">
               This feature is only available within an active chat session.
             </p>
-            <Button onClick={() => onOpenChange(false)}>
+            <Button onClick={() => onOpenChange(false)} className="w-full">
               Close
             </Button>
           </div>
@@ -291,93 +230,114 @@ export function ChatSessionDetailsModal({
     );
   }
 
-  console.log('Rendering main modal content:', { sessionId, dataLoading, contacts: contacts.length, tags: tags.length });
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden bg-card border shadow-xl animate-fade-in">
-        <DialogHeader className="px-6 py-4 border-b border-border">
-          <DialogTitle className="text-xl font-semibold text-foreground flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary"></div>
-            Chat Session Settings
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="overflow-y-auto px-6 pb-6">
-          {dataLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
-                <p className="text-muted-foreground">Loading session details...</p>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl w-full max-h-[90vh] overflow-hidden p-0 bg-background border-border/20 shadow-2xl">
+        <div className="flex flex-col h-full">
+          {/* Modern Header with Gradient */}
+          <div className="relative bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 border-b border-border/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                <Settings className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl font-semibold text-foreground">
+                  Chat Session Settings
+                </DialogTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Configure your chat session preferences and details
+                </p>
               </div>
             </div>
-          ) : (
-            <div className="space-y-8 pt-6">
-              {/* Session Overview Card */}
-              <div className="bg-muted/30 rounded-lg p-5 space-y-3">
-                <h3 className="font-medium text-foreground mb-3">Session Overview</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground">Session ID</p>
-                    <p className="font-mono text-xs bg-background px-2 py-1 rounded border">{sessionId}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground">Created</p>
-                    <p className="text-foreground">Just now</p>
-                  </div>
+          </div>
+
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto">
+            {loadingSessionDetails ? (
+              <div className="flex items-center justify-center h-48">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <p className="text-sm text-muted-foreground">Loading session details...</p>
                 </div>
               </div>
-
-              {/* Main Settings Form */}
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                {/* Basic Information Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-foreground">Basic Information</h3>
-                  
-                  <div className="grid gap-4">
+            ) : (
+              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-8">
+                {/* Session Overview Card */}
+                <div className="bg-muted/30 rounded-xl p-5 border border-border/20">
+                  <h3 className="text-lg font-medium text-foreground mb-4 flex items-center gap-2">
+                    <Info className="w-5 h-5 text-primary" />
+                    Session Overview
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="title" className="text-sm font-medium">
+                      <Label className="text-sm font-medium text-muted-foreground">Session ID</Label>
+                      <div className="bg-background rounded-lg p-3 border border-border/20">
+                        <code className="text-xs text-foreground font-mono break-all">
+                          {sessionId}
+                        </code>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-muted-foreground">Created</Label>
+                      <div className="bg-background rounded-lg p-3 border border-border/20">
+                        <span className="text-sm text-foreground">Just now</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Basic Information Card */}
+                <div className="bg-card rounded-xl p-6 border border-border/20 shadow-sm">
+                  <h3 className="text-lg font-medium text-foreground mb-5 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-primary" />
+                    Basic Information
+                  </h3>
+                  <div className="space-y-5">
+                    <div className="space-y-2">
+                      <Label htmlFor="title" className="text-sm font-medium text-foreground">
                         Chat Title
                       </Label>
                       <Input
                         id="title"
-                        placeholder="Enter a descriptive title for this chat"
                         {...register("title")}
-                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                        placeholder="Enter a descriptive title for this chat"
+                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 border-border/40 focus:border-primary/50"
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="description" className="text-sm font-medium">
+                      <Label htmlFor="description" className="text-sm font-medium text-foreground">
                         Description
                       </Label>
                       <Textarea
                         id="description"
-                        placeholder="Add a brief description of this chat session"
                         {...register("description")}
-                        className="min-h-[80px] transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                        placeholder="Add a brief description of this chat session"
+                        className="min-h-[100px] transition-all duration-200 focus:ring-2 focus:ring-primary/20 border-border/40 focus:border-primary/50 resize-none"
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Chat Type Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-foreground">Chat Configuration</h3>
-                  
-                  <div className="grid md:grid-cols-2 gap-4">
+                {/* Configuration Card */}
+                <div className="bg-card rounded-xl p-6 border border-border/20 shadow-sm">
+                  <h3 className="text-lg font-medium text-foreground mb-5 flex items-center gap-2">
+                    <Settings2 className="w-5 h-5 text-primary" />
+                    Configuration
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="chat_type" className="text-sm font-medium">
+                      <Label htmlFor="chat_type" className="text-sm font-medium text-foreground">
                         Chat Type
                       </Label>
-                      <Select onValueChange={(value) => setValue("chat_type", value)} value={watch("chat_type")}>
-                        <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
+                      <Select onValueChange={(value) => setValue("chat_type", value)} value={watch("chat_type") || ""}>
+                        <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 border-border/40">
                           <SelectValue placeholder="Select chat type" />
                         </SelectTrigger>
                         <SelectContent className="bg-popover border shadow-lg">
                           {CHAT_TYPES.map((type) => (
-                            <SelectItem key={type} value={type} className="focus:bg-accent">
-                              {type}
+                            <SelectItem key={type.value} value={type.value} className="focus:bg-accent">
+                              {type.label}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -385,15 +345,15 @@ export function ChatSessionDetailsModal({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="contact_id" className="text-sm font-medium">
+                      <Label htmlFor="contact_id" className="text-sm font-medium text-foreground">
                         Associated Contact
                       </Label>
                       <Select onValueChange={(value) => setValue("contact_id", value === "none" ? null : value)} value={watch("contact_id") || "none"}>
-                        <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
+                        <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 border-border/40">
                           <SelectValue placeholder="Select contact" />
                         </SelectTrigger>
                         <SelectContent className="bg-popover border shadow-lg">
-                          <SelectItem value="none">No contact</SelectItem>
+                          <SelectItem value="none" className="focus:bg-accent">No contact</SelectItem>
                           {contacts.map((contact) => (
                             <SelectItem key={contact.id} value={contact.id} className="focus:bg-accent">
                               {contact.name}
@@ -403,89 +363,92 @@ export function ChatSessionDetailsModal({
                       </Select>
                     </div>
                   </div>
-                </div>
 
-                {/* Voice Settings Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-foreground">Voice Settings</h3>
-                  
-                  <div className="bg-muted/20 rounded-lg p-4 border border-border">
-                    <div className="flex items-start justify-between">
+                  {/* Voice Settings */}
+                  <div className="mt-6 pt-6 border-t border-border/20">
+                    <div className="flex items-center justify-between">
                       <div className="space-y-1">
-                        <Label htmlFor="voice_enabled" className="text-sm font-medium">
-                          Voice Responses
-                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Mic className="w-4 h-4 text-primary" />
+                          <Label htmlFor="voice_enabled" className="text-sm font-medium text-foreground">
+                            Voice Responses
+                          </Label>
+                        </div>
                         <p className="text-xs text-muted-foreground">
-                          Enable AI voice responses for this chat session
+                          Enable automatic voice reading of AI responses
                         </p>
                       </div>
                       <Switch
                         id="voice_enabled"
-                        checked={watchedVoiceEnabled}
+                        checked={watch("voice_enabled") || false}
                         onCheckedChange={(checked) => setValue("voice_enabled", checked)}
-                        className="data-[state=checked]:bg-primary"
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Tags Section */}
-                {tags.length > 0 && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-foreground">Tags</h3>
-                    
-                    <div className="bg-muted/20 rounded-lg p-4 border border-border">
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Add tags to categorize this chat session
+                {/* Tags Card */}
+                <div className="bg-card rounded-xl p-6 border border-border/20 shadow-sm">
+                  <h3 className="text-lg font-medium text-foreground mb-5 flex items-center gap-2">
+                    <Tag className="w-5 h-5 text-primary" />
+                    Tags
+                  </h3>
+                  {tags.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Tag className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+                      <p className="text-sm text-muted-foreground">No tags available</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">
+                        Tags help organize and categorize your chats
                       </p>
-                      <div className="flex flex-wrap gap-2">
-                        {tags.slice(0, 5).map((tag) => (
-                          <button
-                            key={tag.id}
-                            type="button"
-                            className="px-3 py-1 text-xs rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
-                          >
-                            {tag.name}
-                          </button>
-                        ))}
-                        {tags.length > 5 && (
-                          <span className="px-3 py-1 text-xs text-muted-foreground">
-                            +{tags.length - 5} more
-                          </span>
-                        )}
-                      </div>
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {tags.map((tag) => (
+                        <button
+                          key={tag.id}
+                          type="button"
+                          onClick={() => handleTagToggle(tag.id)}
+                          className={`px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 ${
+                            selectedTags.includes(tag.id)
+                              ? 'bg-primary text-primary-foreground shadow-sm'
+                              : 'bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          {tag.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-end gap-3 pt-6 border-t border-border">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                <div className="flex justify-end gap-3 pt-4 border-t border-border/10">
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => onOpenChange(false)}
                     className="px-6"
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={loading}
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
                     className="px-6 bg-primary hover:bg-primary/90"
                   >
-                    {loading ? (
-                      <>
-                        <div className="w-4 h-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin mr-2"></div>
+                    {isSubmitting ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
                         Saving...
-                      </>
+                      </div>
                     ) : (
                       "Save Changes"
                     )}
                   </Button>
                 </div>
               </form>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
