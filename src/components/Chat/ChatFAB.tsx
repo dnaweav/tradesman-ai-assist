@@ -9,9 +9,14 @@ interface ChatFABProps {
 }
 
 export function ChatFAB({ onClick, className, bottomOffset = 80 }: ChatFABProps) {
+  const handleClick = () => {
+    console.log('ChatFAB clicked - opening modal');
+    onClick();
+  };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       className={cn(
         "fixed right-4 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 flex items-center justify-center",
         className

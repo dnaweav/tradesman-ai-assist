@@ -73,7 +73,10 @@ export default function ChatSession() {
       footerHeight={footerHeight}
       onFooterHeightChange={setFooterHeight}
       modalOpen={modalOpen}
-      onModalOpenChange={setModalOpen}
+      onModalOpenChange={(open) => {
+        console.log('Modal open change called:', open);
+        setModalOpen(open);
+      }}
       sessionId={sessionId || ''}
       onSaveSessionDetails={handleSaveSessionDetails}
     />
