@@ -295,38 +295,198 @@ export function ChatSessionDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white border-2 border-red-500 min-h-[400px]">
-        <DialogHeader className="bg-blue-100 p-4">
-          <DialogTitle className="text-black text-xl">Chat Session Settings (DEBUG MODE)</DialogTitle>
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden bg-card border shadow-xl animate-fade-in">
+        <DialogHeader className="px-6 py-4 border-b border-border">
+          <DialogTitle className="text-xl font-semibold text-foreground flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-primary"></div>
+            Chat Session Settings
+          </DialogTitle>
         </DialogHeader>
         
-        {/* Forced visible content for debugging */}
-        <div className="bg-yellow-100 text-black p-4 border-2 border-yellow-500">
-          <h2 className="text-lg font-bold">DEBUG: Modal Content Test</h2>
-          <p>SessionID: {sessionId}</p>
-          <p>Open: {open.toString()}</p>
-          <p>Loading: {dataLoading.toString()}</p>
-          <p>Contacts: {contacts.length}</p>
-          <p>Tags: {tags.length}</p>
+        <div className="overflow-y-auto px-6 pb-6">
+          {dataLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                <p className="text-muted-foreground">Loading session details...</p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-8 pt-6">
+              {/* Session Overview Card */}
+              <div className="bg-muted/30 rounded-lg p-5 space-y-3">
+                <h3 className="font-medium text-foreground mb-3">Session Overview</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-1">
+                    <p className="text-muted-foreground">Session ID</p>
+                    <p className="font-mono text-xs bg-background px-2 py-1 rounded border">{sessionId}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-muted-foreground">Created</p>
+                    <p className="text-foreground">Just now</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Settings Form */}
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Basic Information Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-foreground">Basic Information</h3>
+                  
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="title" className="text-sm font-medium">
+                        Chat Title
+                      </Label>
+                      <Input
+                        id="title"
+                        placeholder="Enter a descriptive title for this chat"
+                        {...register("title")}
+                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="description" className="text-sm font-medium">
+                        Description
+                      </Label>
+                      <Textarea
+                        id="description"
+                        placeholder="Add a brief description of this chat session"
+                        {...register("description")}
+                        className="min-h-[80px] transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Chat Type Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-foreground">Chat Configuration</h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="chat_type" className="text-sm font-medium">
+                        Chat Type
+                      </Label>
+                      <Select onValueChange={(value) => setValue("chat_type", value)} value={watch("chat_type")}>
+                        <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
+                          <SelectValue placeholder="Select chat type" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover border shadow-lg">
+                          {CHAT_TYPES.map((type) => (
+                            <SelectItem key={type} value={type} className="focus:bg-accent">
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_id" className="text-sm font-medium">
+                        Associated Contact
+                      </Label>
+                      <Select onValueChange={(value) => setValue("contact_id", value)} value={watch("contact_id") || ""}>
+                        <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
+                          <SelectValue placeholder="Select contact" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover border shadow-lg">
+                          <SelectItem value="">No contact</SelectItem>
+                          {contacts.map((contact) => (
+                            <SelectItem key={contact.id} value={contact.id} className="focus:bg-accent">
+                              {contact.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Voice Settings Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-foreground">Voice Settings</h3>
+                  
+                  <div className="bg-muted/20 rounded-lg p-4 border border-border">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <Label htmlFor="voice_enabled" className="text-sm font-medium">
+                          Voice Responses
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          Enable AI voice responses for this chat session
+                        </p>
+                      </div>
+                      <Switch
+                        id="voice_enabled"
+                        checked={watchedVoiceEnabled}
+                        onCheckedChange={(checked) => setValue("voice_enabled", checked)}
+                        className="data-[state=checked]:bg-primary"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tags Section */}
+                {tags.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium text-foreground">Tags</h3>
+                    
+                    <div className="bg-muted/20 rounded-lg p-4 border border-border">
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Add tags to categorize this chat session
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {tags.slice(0, 5).map((tag) => (
+                          <button
+                            key={tag.id}
+                            type="button"
+                            className="px-3 py-1 text-xs rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
+                          >
+                            {tag.name}
+                          </button>
+                        ))}
+                        {tags.length > 5 && (
+                          <span className="px-3 py-1 text-xs text-muted-foreground">
+                            +{tags.length - 5} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex justify-end gap-3 pt-6 border-t border-border">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => onOpenChange(false)}
+                    className="px-6"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    disabled={loading}
+                    className="px-6 bg-primary hover:bg-primary/90"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin mr-2"></div>
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
-        
-        {dataLoading ? (
-          <div className="bg-green-100 text-black p-8 border-2 border-green-500">
-            <div className="text-xl font-bold">LOADING STATE - Should be visible</div>
-          </div>
-        ) : (
-          <div className="bg-purple-100 text-black p-6 border-2 border-purple-500">
-            <h3 className="text-xl font-bold mb-4">CONTENT LOADED - This should be visible!</h3>
-            <p>If you can see this, the modal is working.</p>
-            
-            <Button 
-              onClick={() => onOpenChange(false)}
-              className="mt-4 bg-red-500 text-white"
-            >
-              Close Modal (Test Button)
-            </Button>
-          </div>
-        )}
       </DialogContent>
     </Dialog>
   );
