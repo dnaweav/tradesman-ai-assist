@@ -10,6 +10,15 @@ export function useChatSessionLogic() {
   const location = useLocation();
   const { user } = useAuth();
   
+  // Validate sessionId format (should be a valid UUID)
+  const isValidSessionId = sessionId && sessionId !== ':sessionId' && sessionId.length > 10;
+  
+  console.log('useChatSessionLogic - sessionId validation:', { 
+    sessionId, 
+    isValidSessionId,
+    pathname: location.pathname 
+  });
+  
   const [input, setInput] = React.useState("");
   const [micActive, setMicActive] = React.useState(false);
   const [isAutoReadEnabled, setIsAutoReadEnabled] = React.useState(false);

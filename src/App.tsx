@@ -11,6 +11,7 @@ import BusinessProfile from "./pages/BusinessProfile";
 import UserProfile from "./pages/UserProfile";
 import ChatSession from "./pages/ChatSession";
 import NotFound from "./pages/NotFound";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
@@ -29,7 +30,9 @@ const App = () => (
           } />
           <Route path="/chat/:sessionId" element={
             <AuthGuard>
-              <ChatSession />
+              <ErrorBoundary>
+                <ChatSession />
+              </ErrorBoundary>
             </AuthGuard>
           } />
           <Route path="/business-profile" element={

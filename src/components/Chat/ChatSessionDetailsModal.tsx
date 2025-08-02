@@ -388,12 +388,12 @@ export function ChatSessionDetailsModal({
                       <Label htmlFor="contact_id" className="text-sm font-medium">
                         Associated Contact
                       </Label>
-                      <Select onValueChange={(value) => setValue("contact_id", value)} value={watch("contact_id") || ""}>
+                      <Select onValueChange={(value) => setValue("contact_id", value === "none" ? null : value)} value={watch("contact_id") || "none"}>
                         <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-primary/20">
                           <SelectValue placeholder="Select contact" />
                         </SelectTrigger>
                         <SelectContent className="bg-popover border shadow-lg">
-                          <SelectItem value="">No contact</SelectItem>
+                          <SelectItem value="none">No contact</SelectItem>
                           {contacts.map((contact) => (
                             <SelectItem key={contact.id} value={contact.id} className="focus:bg-accent">
                               {contact.name}

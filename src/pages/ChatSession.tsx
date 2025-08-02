@@ -37,6 +37,13 @@ export default function ChatSession() {
     handleSaveSessionDetails
   } = useChatSessionLogic();
 
+  // Validate sessionId before proceeding
+  if (!sessionId || sessionId === ':sessionId' || sessionId.length < 10) {
+    console.log('Invalid sessionId, redirecting to home:', sessionId);
+    navigate('/');
+    return null;
+  }
+
   if (!user) {
     console.log('No user, redirecting to auth');
     navigate('/auth');
